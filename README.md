@@ -22,4 +22,4 @@ This is a Doctor Appointment App, designed to facilitate the process of scheduli
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/RahulTechwens/DoctorApi.git
+   git clone https://github.com/RahulTechwens/Doctor.git
