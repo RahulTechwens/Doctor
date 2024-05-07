@@ -16,6 +16,10 @@ app.use(
     extended: true,
   })
 );
+
+app.get("/", (req, res) =>{
+  res.send("hello world")
+})
 app.use("/api/user", userRoute);
 app.use("/api/slot", slotentryRoute);
 app.use("/api/slot/book", slotBookRoute);
