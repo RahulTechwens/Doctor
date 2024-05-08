@@ -1,5 +1,5 @@
 const { handleSuccessMessage, handleErrorMessage } = require("../../Utils/responseService");
-const { register, isExsistEmail, listUsers } = require("./user.service");
+const { register, isExsistEmail, listUsers, isExsistPhone } = require("./user.service");
 
 exports.createUser = async (req, res, next) =>{
     try {
