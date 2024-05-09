@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { slot_money, User } = require("../../../models/");
+const { slot_money, User, UserProfile} = require("../../../models/");
 const moment = require("moment");
 
 exports.transactionReport = async (from_date, to_date, filter) => {
