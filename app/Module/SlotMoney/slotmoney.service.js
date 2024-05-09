@@ -29,7 +29,7 @@ exports.addMoney = async (paylaod) => {
 };
 
 exports.getMoney = async(user_id) =>{
-    const money = await slot_money.findOne({
+    const money = await slot_money.findAll({
         where:{
             user_id:user_id
         },
