@@ -29,6 +29,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
       where: {
         date: todays_date,
       },
+      include: [
+        {
+          model: User,
+        },
+      ],
       raw: true,
       nest: true,
     });
@@ -36,6 +41,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
   }
   if (filter == "all") {
     const transaction_report_model_all = await slot_money.findAll({
+      include: [
+        {
+          model: User,
+        },
+      ],
       raw: true,
       nest: true,
     });
