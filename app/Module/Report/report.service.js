@@ -1,9 +1,9 @@
 const { Op } = require("sequelize");
-const { slot_money , User } = require("../../../models/");
+const { slot_money, User } = require("../../../models/");
 const moment = require("moment");
 
 exports.transactionReport = async (from_date, to_date, filter) => {
-//   let transaction_report_model;
+  //   let transaction_report_model;
   if (filter == "custom") {
     if (from_date && to_date) {
       const transaction_report_model_custom = await slot_money.findAll({
@@ -15,6 +15,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
         include: [
           {
             model: User,
+            include: [
+              {
+                model: UserProfile,
+              },
+            ],
           },
         ],
         raw: true,
@@ -32,6 +37,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
       include: [
         {
           model: User,
+          include: [
+            {
+              model: UserProfile,
+            },
+          ],
         },
       ],
       raw: true,
@@ -44,6 +54,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
       include: [
         {
           model: User,
+          include: [
+            {
+              model: UserProfile,
+            },
+          ],
         },
       ],
       raw: true,
