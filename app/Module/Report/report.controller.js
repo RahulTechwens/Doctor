@@ -10,7 +10,7 @@ exports.transaction = async (req, res, next) => {
     if (reportTrans) {
 
       for (let index = 0; index < reportTrans.length; index++) {
-        const reportTransElement = [index];
+        const reportTransElement = reportTrans[index];
         extractArr.push(
           {
             amount:reportTransElement?.amount,
