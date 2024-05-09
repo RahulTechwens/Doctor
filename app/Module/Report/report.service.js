@@ -12,6 +12,11 @@ exports.transactionReport = async (from_date, to_date, filter) => {
             [Op.between]: [from_date, to_date],
           },
         },
+        include: [
+          {
+            model: User,
+          },
+        ],
         raw: true,
         nest: true,
       });
