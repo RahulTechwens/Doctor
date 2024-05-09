@@ -19,6 +19,8 @@ exports.transaction = async (req, res, next) => {
             address:reportTransElement?.User?.UserProfiles?.address,
             phone:reportTransElement?.User?.phone,
             email:reportTransElement?.User?.email,
+            date:reportTransElement?.date,
+            time:reportTransElement?.time
           }
         )
       }
