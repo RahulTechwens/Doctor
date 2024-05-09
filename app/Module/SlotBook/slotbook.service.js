@@ -104,6 +104,7 @@ exports.entry = async (date_string, user_id, mode) => {
     element["seat_available"] = allSlotEntry[0]["limit"] - countBook?.length;
   }
 
+  console.log(allSlotEntry);
   return {
     is_user_booked: is_user_booking,
     user_wise_slot_register: allSlotEntry,
