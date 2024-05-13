@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { slot_money, User, UserProfile} = require("../../../models/");
+const { slot_money, User, UserProfile } = require("../../../models/");
 const moment = require("moment");
 
 exports.transactionReport = async (from_date, to_date, filter) => {
@@ -66,5 +66,25 @@ exports.transactionReport = async (from_date, to_date, filter) => {
     });
 
     return transaction_report_model_all;
+  }
+};
+
+exports.patientBookngReport = async (from_date, to_date, filter) => {
+  if (filter == "custom") {
+    if (from_date && to_date) {
+      const patient_bookng_report_model_custom = await slot_book({
+        where: {
+          date: {
+            [Op.between]: [from_date, to_date],
+          },
+        },
+      })
+
+      return patient_bookng_report_model_custom;
+    }
+  }
+  if (filter == "today") {
+  }
+  if (filter == "all") {
   }
 };
