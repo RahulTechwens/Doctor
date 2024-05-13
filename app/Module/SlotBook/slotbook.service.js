@@ -169,6 +169,9 @@ exports.userWiseSlot = async(patientId) =>{
     },
     include: [
       {
+        model: slot_entries,
+      },
+      {
         model: User,
         include: [
           {

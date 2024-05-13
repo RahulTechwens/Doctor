@@ -86,6 +86,19 @@ exports.getUserWiseSlotBooked = async(req, res, next) =>{
         const patientId = req?.query?.patientId;
         const userWiseSlotBooking = await  userWiseSlot(patientId);
 
+        for (let index = 0; index < userWiseSlotBooking.length; index++) {
+            const userWiseSlotBookingelement = userWiseSlotBooking[index];
+            extractArr.push(
+              {
+                date:userWiseSlotBookingelement.date,
+                slot_id:userWiseSlotBookingelement?.slot_entry?.name,
+                time:userWiseSlotBookingelement?.slot_entry?.start_time,
+                full_name:userWiseSlotBookingelement?.User?.UserProfiles?.full_name,
+                phone:userWiseSlotBookingelement?.User?.phone
+              }
+            )
+          }
+
         return res.status(200).json({
             'status': 200,
             'success': true,
