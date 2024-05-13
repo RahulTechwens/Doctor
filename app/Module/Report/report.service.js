@@ -80,6 +80,8 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
         },
       })
 
+      console.log(patient_bookng_report_model_custom);
+
       return patient_bookng_report_model_custom;
     }
   }
