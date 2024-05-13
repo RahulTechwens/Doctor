@@ -1,5 +1,5 @@
 const { handleErrorMessage, handleSuccessMessage } = require("../../Utils/responseService")
-const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit } = require("./slotbook.service")
+const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot } = require("./slotbook.service")
 
 
 
@@ -76,6 +76,21 @@ exports.getBookSlot = async(req, res, next) =>{
             })
         }
 
+    } catch (error) {
+        next(error)
+    }
+}
+
+exports.getUserWiseSlotBooked = async(req, res, next) =>{
+    try {
+        const patientId = req?.query?.patientId;
+        const userWiseSlotBooking = await  userWiseSlot(patientId);
+
+        return res.status(200).json({
+            'status': 200,
+            'success': true,
+            'data': userWiseSlotBooking
+        })
     } catch (error) {
         next(error)
     }

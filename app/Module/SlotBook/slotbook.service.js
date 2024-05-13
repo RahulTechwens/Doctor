@@ -1,4 +1,5 @@
 const { slot_book, slot_entries } = require("../../../models/");
+const { patient } = require("../Report/report.controller");
 
 exports.book = async (payload) => {
   try {
@@ -160,3 +161,17 @@ exports.edit = async (date_string, user_id, mode) => {
 
   return slots;
 };
+
+exports.userWiseSlot = async(patientId) =>{
+  const bookingData = await slot_book.findAll({
+    where:{
+      user_id:patientId
+    },
+    raw:true,
+    nest:true
+  })
+
+  return bookingData;
+
+
+}
