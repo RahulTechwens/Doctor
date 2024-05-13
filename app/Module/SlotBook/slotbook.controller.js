@@ -83,6 +83,7 @@ exports.getBookSlot = async(req, res, next) =>{
 
 exports.getUserWiseSlotBooked = async(req, res, next) =>{
     try {
+        let extractArr = [];
         const patientId = req?.query?.patientId;
         const userWiseSlotBooking = await  userWiseSlot(patientId);
 
