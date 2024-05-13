@@ -72,6 +72,7 @@ exports.transactionReport = async (from_date, to_date, filter) => {
 exports.patientBookngReport = async (from_date, to_date, filter) => {
   if (filter == "custom") {
     if (from_date && to_date) {
+      
       const patient_bookng_report_model_custom = await slot_book.findAll({
         where: {
           date: {
@@ -95,6 +96,8 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
         nest:true
         
       })
+
+      console.log(patient_bookng_report_model_custom, "jdjd");
 
       return patient_bookng_report_model_custom;
     }
