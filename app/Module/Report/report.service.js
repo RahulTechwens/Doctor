@@ -96,8 +96,7 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
         nest:true
         
       })
-
-      console.log(patient_bookng_report_model_custom, "jdjd");
+      
 
       return patient_bookng_report_model_custom;
     }

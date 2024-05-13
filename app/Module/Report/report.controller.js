@@ -45,15 +45,16 @@ exports.patient = async (req, res, next) =>{
     const reportPatientBookng = await  patientBookngReport(from_date_str, to_date_str, filter);
 
 
-    // for (let index = 0; index < reportPatientBookng.length; index++) {
-    //   const reportPatientelement = reportPatientBookng[index];
-    //   extractArr.push(
-    //     {
-    //       date:reportPatientelement.date,
-    //       slot_id:reportPatientelement?.slot_id
-    //     }
-    //   )
-    // }
+    for (let index = 0; index < reportPatientBookng.length; index++) {
+      const reportPatientelement = reportPatientBookng[index];
+      extractArr.push(
+        {
+          date:reportPatientelement.date,
+          slot_id:reportPatientelement?.slot_entry?.name,
+          full_name:reportPatientelement?.User?.UserProfiles?.full_name
+        }
+      )
+    }
 
     return res.status(200).json({
       status: 200,
