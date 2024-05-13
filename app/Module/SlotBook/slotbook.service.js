@@ -1,4 +1,4 @@
-const { slot_book, slot_entries } = require("../../../models/");
+const { slot_book, slot_entries, User, UserProfile } = require("../../../models/");
 const { patient } = require("../Report/report.controller");
 
 exports.book = async (payload) => {
