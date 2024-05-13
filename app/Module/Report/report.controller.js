@@ -59,7 +59,7 @@ exports.patient = async (req, res, next) =>{
     return res.status(200).json({
       status: 200,
       success: true,
-      data: reportPatientBookng,
+      data: extractArr,
     });
   } catch (error) {
     next(error);
