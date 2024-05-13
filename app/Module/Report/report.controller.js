@@ -51,7 +51,9 @@ exports.patient = async (req, res, next) =>{
         {
           date:reportPatientelement.date,
           slot_id:reportPatientelement?.slot_entry?.name,
-          full_name:reportPatientelement?.User?.UserProfiles?.full_name
+          time:reportPatientelement?.slot_entry?.time,
+          full_name:reportPatientelement?.User?.UserProfiles?.full_name,
+          phone:reportPatientelement?.User?.phone
         }
       )
     }

@@ -167,6 +167,16 @@ exports.userWiseSlot = async(patientId) =>{
     where:{
       user_id:patientId
     },
+    include: [
+      {
+        model: User,
+        include: [
+          {
+            model: UserProfile,
+          },
+        ],
+      },
+    ],
     raw:true,
     nest:true
   })
