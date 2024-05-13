@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { slot_money, User, UserProfile, slot_book } = require("../../../models/");
+const { slot_money, User, UserProfile, slot_book, slot_entries } = require("../../../models/");
 const moment = require("moment");
 
 exports.transactionReport = async (from_date, to_date, filter) => {
@@ -78,9 +78,23 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
             [Op.between]: [from_date, to_date],
           },
         },
+        include: [
+          {
+            model: slot_entries,
+          },
+          {
+            model: User,
+            include: [
+              {
+                model: UserProfile,
+              },
+            ],
+          },
+        ],
+        raw:true,
+        nest:true
+        
       })
-
-      console.log(patient_bookng_report_model_custom);
 
       return patient_bookng_report_model_custom;
     }
