@@ -11,9 +11,14 @@ const { getPagination } = require("../../Utils/pagination");
 
 exports.transactionReport = async (from_date, to_date, filter, offset, limit) => {
   //   let transaction_report_model;
-  console.log(limit, offset);
-  const paginate = getPagination(limit, offset);
-  console.log(paginate);
+  let getOffset;
+  
+  if(limit, offset){
+    const paginate = getPagination(limit, offset);
+    getOffset = Number(paginate.offset);
+    getLimit = Number(paginate.limit);
+  }
+  console.log(getOffset,getLimit);return
   if (filter == "custom") {
     if (from_date && to_date) {
       const transaction_report_model_custom = await slot_money.findAll({
