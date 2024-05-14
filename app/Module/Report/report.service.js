@@ -80,8 +80,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
           ],
         },
       ],
-      offset:getOffset || 1,
-      limit:getLimit || 10,
+      offset:getOffset,
+      limit:getLimit,
       raw: true,
       nest: true,
     });
