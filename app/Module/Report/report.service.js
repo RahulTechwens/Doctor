@@ -106,8 +106,8 @@ exports.patientBookngReport = async (
 
   if ((limit, offset)) {
     const paginate = getPagination(limit, offset);
-    getOffset = Number(paginate.offset);
-    getLimit = Number(paginate.limit);
+    getLimit = Number(paginate.offset);
+    getOffset = Number(paginate.limit);
   }
   console.log(getOffset, getLimit);
 
