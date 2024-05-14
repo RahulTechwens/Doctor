@@ -61,6 +61,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
           ],
         },
       ],
+      offset:getOffset,
+      limit:getLimit,
       raw: true,
       nest: true,
     });
@@ -78,6 +80,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
           ],
         },
       ],
+      offset:getOffset,
+      limit:getLimit,
       raw: true,
       nest: true,
     });
