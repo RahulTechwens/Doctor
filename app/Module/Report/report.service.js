@@ -24,6 +24,7 @@ exports.transactionReport = async (
     getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
   }
+  console.log(getOffset, getLimit);
   if (filter == "custom") {
     if (from_date && to_date) {
       const transaction_report_model_custom = await slot_money.findAll({
