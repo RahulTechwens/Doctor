@@ -11,6 +11,7 @@ const { getPagination } = require("../../Utils/pagination");
 
 exports.transactionReport = async (from_date, to_date, filter, offset, limit) => {
   //   let transaction_report_model;
+  console.log(limit, offset);
   const paginate = getPagination(limit, offset);
   console.log(paginate);
   if (filter == "custom") {
