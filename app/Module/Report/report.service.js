@@ -110,6 +110,8 @@ exports.patientBookngReport = async (
     getLimit = Number(paginate.limit);
   }
   console.log(getOffset, getLimit);
+
+  
   if (filter == "custom") {
     if (from_date && to_date) {
       const patient_bookng_report_model_custom = await slot_book.findAll({
