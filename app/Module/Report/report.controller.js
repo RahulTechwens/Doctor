@@ -5,8 +5,10 @@ exports.transaction = async (req, res, next) => {
     const from_date_str = req?.query?.from_date;
     const to_date_str = req?.query?.to_date;
     const filter = req?.query?.filter;
+    const offset = req?.query?.offset;
+    const limit = req?.query?.limit;
     let extractArr = []
-    const reportTrans = await  transactionReport(from_date_str, to_date_str, filter);
+    const reportTrans = await  transactionReport(from_date_str, to_date_str, filter, offset, limit);
     if (reportTrans) {
 
       for (let index = 0; index < reportTrans.length; index++) {
