@@ -9,16 +9,21 @@ const {
 const moment = require("moment");
 const { getPagination } = require("../../Utils/pagination");
 
-exports.transactionReport = async (from_date, to_date, filter, offset, limit) => {
+exports.transactionReport = async (
+  from_date,
+  to_date,
+  filter,
+  offset,
+  limit
+) => {
   //   let transaction_report_model;
   let getOffset, getLimit;
-  
-  if(limit, offset){
+
+  if ((limit, offset)) {
     const paginate = getPagination(limit, offset);
     getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
   }
-  console.log(getOffset,getLimit);
   if (filter == "custom") {
     if (from_date && to_date) {
       const transaction_report_model_custom = await slot_money.findAll({
@@ -37,8 +42,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
             ],
           },
         ],
-        offset:getOffset,
-        limit:getLimit,
+        offset: getOffset || 1,
+        limit: getLimit || 10,
         raw: true,
         nest: true,
       });
@@ -61,8 +66,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
           ],
         },
       ],
-      offset:getOffset,
-      limit:getLimit,
+      offset: getOffset || 1,
+      limit: getLimit || 10,
       raw: true,
       nest: true,
     });
@@ -80,8 +85,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
           ],
         },
       ],
-      offset:getOffset,
-      limit:getLimit,
+      offset: getOffset || 1,
+      limit: getLimit || 10,
       raw: true,
       nest: true,
     });
@@ -90,7 +95,20 @@ exports.transactionReport = async (from_date, to_date, filter, offset, limit) =>
   }
 };
 
-exports.patientBookngReport = async (from_date, to_date, filter) => {
+exports.patientBookngReport = async (
+  from_date,
+  to_date,
+  filter,
+  offset,
+  limit
+) => {
+  let getOffset, getLimit;
+
+  if ((limit, offset)) {
+    const paginate = getPagination(limit, offset);
+    getOffset = Number(paginate.offset);
+    getLimit = Number(paginate.limit);
+  }
   if (filter == "custom") {
     if (from_date && to_date) {
       const patient_bookng_report_model_custom = await slot_book.findAll({
@@ -112,6 +130,8 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
             ],
           },
         ],
+        offset: getOffset || 1,
+        limit: getLimit || 10,
         raw: true,
         nest: true,
       });
@@ -137,6 +157,8 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
           ],
         },
       ],
+      offset: getOffset || 1,
+      limit: getLimit || 10,
       raw: true,
       nest: true,
     });
@@ -157,6 +179,8 @@ exports.patientBookngReport = async (from_date, to_date, filter) => {
           ],
         },
       ],
+      offset: getOffset || 1,
+      limit: getLimit || 10,
       raw: true,
       nest: true,
     });
