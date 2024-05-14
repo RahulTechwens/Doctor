@@ -9,7 +9,7 @@ const {
 const moment = require("moment");
 const { getPagination } = require("../../Utils/pagination");
 
-exports.transactionReport = async (from_date, to_date, filter, offset=1, limit=10) => {
+exports.transactionReport = async (from_date, to_date, filter, offset, limit) => {
   //   let transaction_report_model;
   let getOffset;
   
@@ -80,8 +80,8 @@ exports.transactionReport = async (from_date, to_date, filter, offset=1, limit=1
           ],
         },
       ],
-      offset:getOffset,
-      limit:getLimit,
+      offset:getOffset || 1,
+      limit:getLimit || 10,
       raw: true,
       nest: true,
     });
