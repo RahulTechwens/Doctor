@@ -20,7 +20,7 @@ exports.transactionReport = async (
   let getOffset, getLimit;
 
   if ((limit, offset)) {
-    const paginate = getPagination(limit, offset);
+    const paginate = getPagination(offset, limit);
     getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
   }
@@ -105,12 +105,11 @@ exports.patientBookngReport = async (
   let getOffset, getLimit;
 
   if ((limit, offset)) {
-    const paginate = getPagination(limit, offset);
-    getLimit = Number(paginate.offset);
-    getOffset = Number(paginate.limit);
+    const paginate = getPagination(offset, limit);
+    getOffset = Number(paginate.offset);
+    getLimit = Number(paginate.limit);
   }
   console.log(getOffset, getLimit);
-
   
   if (filter == "custom") {
     if (from_date && to_date) {
