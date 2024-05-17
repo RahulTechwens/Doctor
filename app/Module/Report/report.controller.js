@@ -15,6 +15,7 @@ exports.transaction = async (req, res, next) => {
         const reportTransElement = reportTrans[index];
         extractArr.push(
           {
+            id:reportTransElement?.id,
             amount:reportTransElement?.amount,
             total_amount:reportTransElement?.total_amount,
             full_name:reportTransElement?.User?.UserProfiles?.full_name,
