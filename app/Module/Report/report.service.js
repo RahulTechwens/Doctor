@@ -53,7 +53,7 @@ exports.transactionReport = async (
   }
   if (filter == "today") {
     let todays_date = moment().format("YYYY-MM-DD");
-    const transaction_report_model_today = await slot_money.findAll({
+    const transaction_report_model_today = await slot_money.findAndCountAll({
       where: {
         date: todays_date,
       },
@@ -75,7 +75,7 @@ exports.transactionReport = async (
     return transaction_report_model_today;
   }
   if (filter == "all") {
-    const transaction_report_model_all = await slot_money.findAll({
+    const transaction_report_model_all = await slot_money.findAndCountAll({
       include: [
         {
           model: User,
