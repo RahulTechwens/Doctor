@@ -10,7 +10,7 @@ exports.transaction = async (req, res, next) => {
     let extractArr = []
     const reportTrans = await  transactionReport(from_date_str, to_date_str, filter, offset, limit);
     if (reportTrans) {
-
+      console.log(reportTrans);
       for (let index = 0; index < reportTrans.length; index++) {
         const reportTransElement = reportTrans[index];
         extractArr.push(
