@@ -21,7 +21,7 @@ exports.transactionReport = async (
 
   if ((limit, offset)) {
     const paginate = getPagination(offset, limit);
-    getOffset = Number(paginate.offset);
+    getOffset = offset
     getLimit = Number(paginate.limit);
   }
   console.log(getOffset, getLimit, limit, offset);
@@ -46,7 +46,7 @@ exports.transactionReport = async (
         offset: getOffset || 1,
         limit: getLimit || 10,
         raw: true,
-        // nest: true,
+        nest: true,
       });
       return transaction_report_model_custom;
     }
@@ -70,7 +70,7 @@ exports.transactionReport = async (
       offset: getOffset || 1,
       limit: getLimit || 10,
       raw: true,
-      // nest: true,
+      nest: true,
     });
     return transaction_report_model_today;
   }
@@ -89,7 +89,7 @@ exports.transactionReport = async (
       offset: getOffset || 1,
       limit: getLimit || 10,
       raw: true,
-      // nest: true,
+      nest: true,
     });
 
     return transaction_report_model_all;
