@@ -21,7 +21,7 @@ exports.transactionReport = async (
 
   if ((limit, offset)) {
     const paginate = getPagination(offset, limit);
-    getOffset =offset;
+    getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
   }
   console.log(getOffset, getLimit, limit, offset);
