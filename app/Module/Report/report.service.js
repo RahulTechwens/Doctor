@@ -19,12 +19,11 @@ exports.transactionReport = async (
   //   let transaction_report_model;
   let getOffset, getLimit;
 
-  if (typeof limit !== 'undefined' && typeof offset !== 'undefined') {
-    const paginate = getPagination(offset / limit + 1, limit);
+  if ((limit, offset)) {
+    const paginate = getPagination(offset, limit);
     getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
   }
-  
   console.log(getOffset, getLimit, limit, offset);
   if (filter == "custom") {
     if (from_date && to_date) {
