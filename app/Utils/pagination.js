@@ -1,7 +1,14 @@
 exports.getPagination = (page, size) => {
+  // const limit = size ? + size : 10;
+
   const limit = size;
-  const parsedPage = parseInt(page, 10);
+
+  // var r = r ? r : limit;
+
   const offset =
-    !parsedPage || parsedPage === 1 || parsedPage === 0 ? 0 : parsedPage * limit - limit;
+    !page || parseInt(page) === 1 || parseInt(page) === 0
+      ? 0
+      : page * limit - limit;
+
   return { limit, offset };
 };
