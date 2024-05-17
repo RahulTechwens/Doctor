@@ -19,7 +19,7 @@ exports.transactionReport = async (
   //   let transaction_report_model;
   let getOffset, getLimit;
 
-  if ((limit, offset)) {
+  if (typeof limit !== 'undefined' && typeof offset !== 'undefined') {
     const paginate = getPagination(offset, limit);
     getOffset = Number(paginate.offset);
     getLimit = Number(paginate.limit);
