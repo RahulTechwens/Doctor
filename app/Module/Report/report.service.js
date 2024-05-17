@@ -86,8 +86,8 @@ exports.transactionReport = async (
           ],
         },
       ],
-      offset: getOffset || 0,
-      limit: getLimit || 10,
+      offset: getOffset,
+      limit: getLimit,
       raw: true,
       nest: true,
     });
