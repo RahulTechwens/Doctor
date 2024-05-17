@@ -86,7 +86,7 @@ exports.transactionReport = async (
           ],
         },
       ],
-      offset: getOffset || 1,
+      offset: getOffset || 0,
       limit: getLimit || 10,
       raw: true,
       nest: true,
