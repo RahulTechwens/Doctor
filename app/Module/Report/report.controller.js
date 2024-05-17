@@ -53,7 +53,7 @@ exports.patient = async (req, res, next) =>{
       const reportPatientelement = reportPatientBookng[index];
       extractArr.push(
         {
-          id:reportPatientBookng?.id,
+          id:reportPatientelement?.id,
           date:reportPatientelement.date,
           slot_id:reportPatientelement?.slot_entry?.name,
           time:reportPatientelement?.slot_entry?.start_time,
