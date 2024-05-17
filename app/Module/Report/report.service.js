@@ -21,13 +21,13 @@ exports.transactionReport = async (
 
   if ((limit, offset)) {
     const paginate = getPagination(offset, limit);
-    getOffset = offset;
-    getLimit = (offset - 1) * limit;
+    getOffset = Number(paginate.offset);
+    getLimit = Number(paginate.limit);
   }
   console.log(getOffset, getLimit, limit, offset);
   if (filter == "custom") {
     if (from_date && to_date) {
-      const transaction_report_model_custom = await slot_money.findAll({
+      const transaction_report_model_custom = await slot_money.findAndCountAll({
         where: {
           date: {
             [Op.between]: [from_date, to_date],
