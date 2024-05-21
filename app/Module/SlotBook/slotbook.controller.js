@@ -8,7 +8,7 @@ exports.bookSlot = async (req, res, next) =>{
         const { store, date, time, user, type, old_date} =  req.body
 
         const payloadOfSlotBook = {
-            store_id:store, date, time, user_id:user, type, old_date
+            store_id:store, date, time, user_id:user, type
         }
         const checkSlot = await checkSlotEmpty(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
         const checkSlotEntry = await slotEntries(payloadOfSlotBook?.store_id);
@@ -31,7 +31,7 @@ exports.bookSlot = async (req, res, next) =>{
         }else{
             delete payloadOfSlotBook.type
             if (checkSlot.length < checkSlotEntry?.length) {
-                const isReschedule = await reschedule(payloadOfSlotBook)
+                const isReschedule = await reschedule(payloadOfSlotBook, old_date)
 
                 if (isReschedule) {
                     return handleSuccessMessage(res, 200, "Slot rescheduled Successful")

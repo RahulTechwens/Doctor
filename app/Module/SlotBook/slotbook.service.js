@@ -48,10 +48,10 @@ exports.slotEntries = async (slot) => {
   return slotEntryLimit;
 };
 
-exports.reschedule = async (payload) => {
+exports.reschedule = async (payload, old_date) => {
   const rescheduleSlot = await slot_book.update(payload, {
     where: {
-      date: payload?.old_date,
+      date: old_date,
     },
   });
 
