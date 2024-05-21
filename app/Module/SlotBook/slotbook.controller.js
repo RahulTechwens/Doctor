@@ -29,7 +29,6 @@ exports.bookSlot = async (req, res, next) =>{
                 return handleErrorMessage(res, 400, "Slots are full.");
             }
         }else{
-            console.log(checkSlotEntry?);
             delete payloadOfSlotBook.type
             if (checkSlot.length < checkSlotEntry?.length) {
                 const isReschedule = await reschedule(checkSlotEntry, payloadOfSlotBook)
