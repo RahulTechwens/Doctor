@@ -30,8 +30,8 @@ exports.bookSlot = async (req, res, next) =>{
             }
         }else{
             delete payloadOfSlotBook.type
-            if (checkSlot.length < checkSlotEntry?.limit) {
-                const isReschedule = await reschedule(payloadOfSlotBook)
+            if (checkSlot.length < checkSlotEntry?.limit.length) {
+                const isReschedule = await reschedule(checkSlotEntry, payloadOfSlotBook)
 
                 if (isReschedule) {
                     return handleSuccessMessage(res, 200, "Slot rescheduled Successful")

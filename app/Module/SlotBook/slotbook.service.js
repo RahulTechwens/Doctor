@@ -37,7 +37,7 @@ exports.checkSlotEmpty = async (date, slot) => {
 };
 
 exports.slotEntries = async (slot) => {
-  const slotEntryLimit = await slot_entries.findOne({
+  const slotEntryLimit = await slot_entries.findAll({
     where: {
       id: slot,
     },
@@ -48,10 +48,10 @@ exports.slotEntries = async (slot) => {
   return slotEntryLimit;
 };
 
-exports.reschedule = async (payload) => {
+exports.reschedule = async (checkSlotEntry, payload) => {
   const rescheduleSlot = await slot_book.update(payload, {
     where: {
-      date: payload?.date,
+      date: checkSlotEntry[0]?.date,
     },
   });
 
