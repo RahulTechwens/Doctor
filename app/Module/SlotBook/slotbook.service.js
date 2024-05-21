@@ -36,10 +36,11 @@ exports.checkSlotEmpty = async (date, slot) => {
   return checklotEmpty;
 };
 
-exports.slotEntries = async (slot) => {
+exports.slotEntries = async (date, slot) => {
   const slotEntryLimit = await slot_entries.findAll({
     where: {
       id: slot,
+      date, date
     },
     raw: true,
     nest: true,

@@ -11,7 +11,7 @@ exports.bookSlot = async (req, res, next) =>{
             store_id:store, date, time, user_id:user, type
         }
         const checkSlot = await checkSlotEmpty(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
-        const checkSlotEntry = await slotEntries(payloadOfSlotBook?.store_id);
+        const checkSlotEntry = await slotEntries(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
         if (type == "entry") {
             delete payloadOfSlotBook.type
             const isCheckBookingStatus = await checkbookingStatus(payloadOfSlotBook.date, payloadOfSlotBook.user_id)
