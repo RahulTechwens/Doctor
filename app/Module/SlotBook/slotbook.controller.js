@@ -5,10 +5,10 @@ const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry
 
 exports.bookSlot = async (req, res, next) =>{
     try {
-        const { store, date, time, user, type } =  req.body
+        const { store, date, time, user, type, old_date} =  req.body
 
         const payloadOfSlotBook = {
-            store_id:store, date, time, user_id:user, type
+            store_id:store, date, time, user_id:user, type, old_date
         }
         const checkSlot = await checkSlotEmpty(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
         const checkSlotEntry = await slotEntries(payloadOfSlotBook?.store_id);

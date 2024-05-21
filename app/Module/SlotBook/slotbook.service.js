@@ -51,7 +51,7 @@ exports.slotEntries = async (slot) => {
 exports.reschedule = async (payload) => {
   const rescheduleSlot = await slot_book.update(payload, {
     where: {
-      date: payload?.date,
+      date: payload?.old_date,
     },
   });
 
