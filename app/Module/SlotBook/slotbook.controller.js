@@ -31,7 +31,7 @@ exports.bookSlot = async (req, res, next) =>{
         }else{
             delete payloadOfSlotBook.type
             console.log(old_date, checkSlotEntry?.length, checkSlot.length);
-            if (checkSlot.length < checkSlotEntry?.length) {
+            if (checkSlot.length <= checkSlotEntry?.length) {
                 const isReschedule = await reschedule(payloadOfSlotBook, old_date)
 
                 if (isReschedule) {
