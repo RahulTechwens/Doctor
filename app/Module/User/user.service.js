@@ -109,3 +109,16 @@ exports.listUsers = async (search) => {
     throw error;
   }
 };
+
+exports.packageList = async(userId) =>{
+  try {
+    const list = Package.findAll({
+      where:{
+        userId:userId
+      }
+    });
+    return list;
+  } catch (error) {
+    throw error
+  }
+}

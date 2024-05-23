@@ -1,5 +1,5 @@
 const { handleSuccessMessage, handleErrorMessage } = require("../../Utils/responseService");
-const { register, isExsistEmail, listUsers, isExsistPhone } = require("./user.service");
+const { register, isExsistEmail, listUsers, isExsistPhone, packageList } = require("./user.service");
 
 exports.createUser = async (req, res, next) =>{
     try {
@@ -43,6 +43,16 @@ exports.listUser = async (req, res, next) =>{
         return handleSuccessMessage(res, 200, "", users)
     } catch (error) {
         next(error);
+    }
+}
+
+exports.listPackage = async (req, res, next) =>{
+    try {
+        const userId = req?.params.userId
+        const list = await packageList(userId);
+        return handleSuccessMessage(res, 200, list)
+    } catch (error) {
+        next(error)
     }
 }
 // http://13.232.87.199/
