@@ -116,7 +116,7 @@ exports.getUserWiseSlotBooked = async(req, res, next) =>{
         return res.status(200).json({
             'status': 200,
             'success': true,
-            'data': userWiseSlotBooking
+            'patientWiseMoneyData': userWiseSlotBooking
         })
     } catch (error) {
         next(error)
