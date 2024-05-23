@@ -4,6 +4,14 @@ exports.create = async (payload) => {
     try {
         let payloadSata = [
             {
+                "name":"Slot 1",
+                "limit":6,
+                "seat_available":6,
+                "date": "2024-04-10T00:00:00Z",
+                "start_time": "10:00:00",
+                "end_time": "11:00:00"
+            },
+            {
                 "name":"Slot 2",
                 "limit":6,
                 "seat_available":6,

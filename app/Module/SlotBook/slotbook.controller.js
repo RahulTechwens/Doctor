@@ -39,6 +39,9 @@ exports.bookSlot = async (req, res, next) =>{
         else if (type == "present") {
             const presentData = await present(user, date, store);
             // date store er against a is_Complete true hobe
+            if (presentData) {
+                return handleSuccessMessage(res, 200, "Slot completed Successful")
+            }
         }
         else{
             delete payloadOfSlotBook.type
