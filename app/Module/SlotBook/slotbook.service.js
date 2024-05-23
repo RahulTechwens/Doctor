@@ -12,22 +12,25 @@ exports.book = async (payload) => {
   try {
     const bookslot = await slot_book.create(payload);
     if (bookslot) {
-      const packageCount =  await slot_book.findAll({
-        where:{
-          package_id:payload?.package_id
-        }
-      })
+      const packageCount = await slot_book.findAll({
+        where: {
+          package_id: payload?.package_id,
+        },
+      });
       if (packageCount.length == 6) {
-        await Package.update({
-          status:1
-        },{
-          where:{
-            id:payload?.package_id
+        await Package.update(
+          {
+            status: 1,
+          },
+          {
+            where: {
+              id: payload?.package_id,
+            },
           }
-        })
+        );
       }
     }
-    // const packageCount = 
+    // const packageCount =
     return bookslot;
   } catch (error) {
     throw error;
@@ -81,31 +84,38 @@ exports.reschedule = async (payload, old_date) => {
 
   return rescheduleSlot;
 };
-exports.absent = async(user, date, store) =>{
+exports.absent = async (user, date, store) => {
   try {
     const deleteData = await slot_book.delete({
-      where:{
-        user_id: user, date:date, store_id:store
-      }
-    })
-    return deleteData
+      where: {
+        user_id: user,
+        date: date,
+        store_id: store,
+      },
+    });
+    return deleteData;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
-exports.present = async (user, date, store)=>{
+exports.present = async (user, date, store) => {
   try {
-    const updateStatus = await slot_book.update({is_complete:1},{
-      where:{
-        user_id: user, date:date, store_id:store
+    const updateStatus = await slot_book.update(
+      { is_complete: 1 },
+      {
+        where: {
+          user_id: user,
+          date: date,
+          store_id: store,
+        },
       }
-    })
-    return updateStatus
+    );
+    return updateStatus;
   } catch (error) {
-    throw error
+    throw error;
   }
-}
+};
 
 // exports.getAllSLotEntry = async () => {
 //   const allSlotEntry = await slot_entries.findAll({
@@ -328,34 +338,27 @@ exports.userWiseSlot = async (patientId) => {
   //   nest: true,
   // });
   // })
-  // Initialize result object
-  // Initialize result array
-  const result = packages.map((pkg) => ({
-    packageName: pkg.packageName,
-    status: pkg.status,
-    patientWiseBookedData: [],
-  }));
 
-  allSlotEntry.forEach((slot) => {
-    result.forEach((pkg) => {
-      let packageSlot = pkg.patientWiseBookedData.find((s) => s.id === slot.id);
-      if (!packageSlot) {
-        packageSlot = { ...slot, slotBook: [] };
-        pkg.patientWiseBookedData.push(packageSlot);
-      }
-    });
+  let result = packages.map((pkg) => {
+    let packageSlots = allSlotEntry
+      .map((slot) => {
+        let slotBook = slot.slotBook.filter(
+          (book) => book.package_id === pkg.id
+        );
+        return {
+          ...slot,
+          slotBook: slotBook.length > 0 ? slotBook : undefined,
+        };
+      })
+      .filter((slot) => slot.slotBook !== undefined);
 
-    slot.slotBook.forEach((slotBook) => {
-      const packageName = packages.find(
-        (pkg) => pkg.id === slotBook.package_id
-      ).packageName;
-      const packageEntry = result.find(
-        (pkg) => pkg.packageName === packageName
-      );
-      const packageSlot = packageEntry.data.find((s) => s.id === slot.id);
-      packageSlot.slotBook.push(slotBook);
-    });
+    return {
+      packageName: pkg.packageName,
+      status: pkg.status,
+      patientWiseBookedData: packageSlots,
+    };
   });
 
+  // console.log(JSON.stringify(result, null, 2));
   return result;
 };
