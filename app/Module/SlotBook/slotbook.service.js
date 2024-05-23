@@ -338,10 +338,10 @@ exports.userWiseSlot = async (patientId) => {
 
   allSlotEntry.forEach((slot) => {
     result.forEach((pkg) => {
-      let packageSlot = pkg.data.find((s) => s.id === slot.id);
+      let packageSlot = pkg.patientWiseBookedData.find((s) => s.id === slot.id);
       if (!packageSlot) {
         packageSlot = { ...slot, slotBook: [] };
-        pkg.data.push(packageSlot);
+        pkg.patientWiseBookedData.push(packageSlot);
       }
     });
 
