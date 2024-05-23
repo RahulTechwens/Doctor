@@ -2,33 +2,21 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('slot_books', {
+    await queryInterface.createTable('Packages', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      store_id:{
-        type: Sequelize.INTEGER,
+      packageName: {
+        type: Sequelize.STRING
       },
-      date:{
-        type: Sequelize.STRING,
+      status: {
+        type: Sequelize.BOOLEAN
       },
-      time:{
-        type: Sequelize.TIME,
-      },
-      description:{
-        type: Sequelize.TEXT,
-      },
-      is_complete:{
-        type: Sequelize.BOOLEAN,
-      },
-      package_id:{
-        type:Sequelize.INTEGER,
-      },
-      user_id: {
-        type: Sequelize.INTEGER,
+      userId: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
@@ -41,6 +29,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('slot_books');
+    await queryInterface.dropTable('Packages');
   }
 };

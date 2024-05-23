@@ -1,9 +1,33 @@
-const { slot_book, slot_entries, User, UserProfile } = require("../../../models/");
+const { emit } = require("nodemon");
+const {
+  slot_book,
+  slot_entries,
+  User,
+  UserProfile,
+  Package,
+} = require("../../../models/");
 const { patient } = require("../Report/report.controller");
 
 exports.book = async (payload) => {
   try {
     const bookslot = await slot_book.create(payload);
+    if (bookslot) {
+      const packageCount =  await slot_book.findAll({
+        where:{
+          package_id:payload?.package_id
+        }
+      })
+      if (packageCount.length == 6) {
+        await Package.update({
+          status:1
+        },{
+          where:{
+            id:payload?.package_id
+          }
+        })
+      }
+    }
+    // const packageCount = 
     return bookslot;
   } catch (error) {
     throw error;
@@ -57,6 +81,31 @@ exports.reschedule = async (payload, old_date) => {
 
   return rescheduleSlot;
 };
+exports.absent = async(user, date, store) =>{
+  try {
+    const deleteData = await slot_book.delete({
+      where:{
+        user_id: user, date:date, store_id:store
+      }
+    })
+    return deleteData
+  } catch (error) {
+    throw error
+  }
+}
+
+exports.present = async (user, date, store)=>{
+  try {
+    const updateStatus = await slot_book.update({is_complete:1},{
+      where:{
+        user_id: user, date:date, store_id:store
+      }
+    })
+    return updateStatus
+  } catch (error) {
+    throw error
+  }
+}
 
 // exports.getAllSLotEntry = async () => {
 //   const allSlotEntry = await slot_entries.findAll({
@@ -105,7 +154,7 @@ exports.entry = async (date_string, user_id, mode) => {
     element["seat_available"] = allSlotEntry[0]["limit"] - countBook?.length;
   }
 
-  console.log(allSlotEntry);
+  // console.log(allSlotEntry);
   return {
     is_user_booked: is_user_booking,
     user_wise_slot_register: allSlotEntry,
@@ -162,29 +211,151 @@ exports.edit = async (date_string, user_id, mode) => {
   return slots;
 };
 
-exports.userWiseSlot = async(patientId) =>{
-  const bookingData = await slot_book.findAll({
-    where:{
-      user_id:patientId
-    },
-    include: [
-      {
-        model: slot_entries,
+exports.userWiseSlot = async (patientId) => {
+  let is_user_booking = 0;
+
+  const allSlotEntry = await slot_entries.findAll({
+    raw: true,
+    nest: true,
+  });
+
+  for (let index = 0; index < allSlotEntry.length; index++) {
+    const element = allSlotEntry[index];
+
+    let countBook = await slot_book.findAll({
+      where: {
+        store_id: element?.id,
+        // date: date_string,
       },
-      {
-        model: User,
+    });
+
+    let countWithDate =
+      // await Package.findAll ({
+      //   where:{
+      //     userId: patientId,
+      //   },
+      //   include:[{
+      //     model:slot_book,
+      //     where:{
+      //       store_id: element?.id,
+      //       // date: date_string,
+      //     }
+      //   }]
+      // })
+      await slot_book.findAll({
+        where: {
+          store_id: element?.id,
+          // date: date_string,
+          user_id: patientId,
+        },
         include: [
           {
-            model: UserProfile,
+            model: Package,
           },
         ],
-      },
-    ],
-    raw:true,
-    nest:true
-  })
+        raw: true,
+        nest: true,
+      });
+    if (countWithDate.length > 0) {
+      is_user_booking = 1;
+      element["is_user_booking"] = 1;
+    } else {
+      element["is_user_booking"] = 0;
+    }
+    element["seat_available"] = allSlotEntry[0]["limit"] - countBook?.length;
+    element["slotBook"] = countWithDate;
+  }
 
-  return bookingData;
+  const packages = await Package.findAll({
+    where: {
+      userId: patientId,
+    },
+    raw: true,
+    nest: true,
+  });
 
+  // const bookingData = await Package.findAll({
+  //   where: {
+  //     userId: patientId,
+  //   },
+  //   include: [
+  //     {
+  //       model: slot_book,
+  //       include: [
+  //         {
+  //           model: slot_entries,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   raw: true,
+  //   nest: true,
+  // });
 
-}
+  // await slot_book.findAll({
+  //   where:{
+  //     user_id:patientId
+  //   },
+  //   include: [
+  //     {
+  //       model: slot_entries,
+  //     },
+  //     {
+  //       model: User,
+  //       include: [
+  //         {
+  //           model: UserProfile,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   raw:true,
+  //   nest:true // const bookingData = await Package.findAll({
+  //   where: {
+  //     userId: patientId,
+  //   },
+  //   include: [
+  //     {
+  //       model: slot_book,
+  //       include: [
+  //         {
+  //           model: slot_entries,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  //   raw: true,
+  //   nest: true,
+  // });
+  // })
+  // Initialize result object
+  // Initialize result array
+  const result = packages.map((pkg) => ({
+    packageName: pkg.packageName,
+    status: pkg.status,
+    data: [],
+  }));
+
+  allSlotEntry.forEach((slot) => {
+    result.forEach((pkg) => {
+      let packageSlot = pkg.data.find((s) => s.id === slot.id);
+      if (!packageSlot) {
+        packageSlot = { ...slot, slotBook: [] };
+        pkg.data.push(packageSlot);
+      }
+    });
+
+    slot.slotBook.forEach((slotBook) => {
+      const packageName = packages.find(
+        (pkg) => pkg.id === slotBook.package_id
+      ).packageName;
+      const packageEntry = result.find(
+        (pkg) => pkg.packageName === packageName
+      );
+      const packageSlot = packageEntry.data.find((s) => s.id === slot.id);
+      packageSlot.slotBook.push(slotBook);
+    });
+  });
+
+  return result;
+};

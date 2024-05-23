@@ -1,24 +1,45 @@
-const { User, UserProfile } = require("../../../models/");
+const { User, UserProfile, Package } = require("../../../models/");
 const { Op } = require("sequelize");
 
 exports.register = async (payload, userProfilePayload) => {
   try {
-    const saveUser = await User.create(payload);
-    if (saveUser) {
-      const lastInsertedUser = await User.findAll({
-        limit: 1,
-        order: [["createdAt", "DESC"]],
-        raw: true,
-        nest: true,
+    let saveUser;
+
+    const getUser = await User.findOne({
+      where: {
+        phone: payload?.phone,
+      },
+      raw:true,
+      nest:true
+    });
+    if (!getUser) {
+      saveUser = await User.create(payload);
+      await Package.create({
+        packageName: `Package 1`,
+        status: false,
+        userId: saveUser.id,
       });
       await UserProfile.create({
         ...userProfilePayload,
-        user_id: lastInsertedUser[0]?.id,
+        user_id: saveUser.id,
       });
-    }
-    if (saveUser) {
+      if (saveUser) {
+        return true;
+      }
+    } else {
+      const countPackage = await Package.findAll({
+        where: {
+          userId: getUser?.id,
+        },
+      });
+      await Package.create({
+        packageName: `Package ${Number(countPackage.length) + 1}`,
+        status: false,
+        userId: getUser.id,
+      });
       return true;
     }
+   
     return false;
   } catch (error) {
     throw error;

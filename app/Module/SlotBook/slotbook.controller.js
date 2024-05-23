@@ -1,14 +1,14 @@
 const { handleErrorMessage, handleSuccessMessage } = require("../../Utils/responseService")
-const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot } = require("./slotbook.service")
+const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot, absent } = require("./slotbook.service")
 
 
 
 exports.bookSlot = async (req, res, next) =>{
     try {
-        const { store, date, time, user, type, old_date} =  req.body
+        const { store, date, time, user, type, old_date, package_id} =  req.body
 
         const payloadOfSlotBook = {
-            store_id:store, date, time, user_id:user, type
+            store_id:store, date, time, user_id:user, type, package_id
         }
         const checkSlot = await checkSlotEmpty(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
         const checkSlotEntry = await slotEntries(payloadOfSlotBook?.store_id);
@@ -18,9 +18,9 @@ exports.bookSlot = async (req, res, next) =>{
             if (isCheckBookingStatus) {
                 return handleErrorMessage(res, 400, "Slot is already booked for the User.")
             }
-           
+            
 
-            if (checkSlot.length < checkSlotEntry?.limit) {
+            if (checkSlot.length <= checkSlotEntry?.length) {
                 const checkEntry = await book(payloadOfSlotBook)
                 if (checkEntry) {
                     return handleSuccessMessage(res, 200, "Slot Booked Successful")
@@ -28,7 +28,19 @@ exports.bookSlot = async (req, res, next) =>{
             }else{
                 return handleErrorMessage(res, 400, "Slots are full.");
             }
-        }else{
+        }
+        else if (type == "absent") {
+
+            const absentData = await absent(user, date, store);
+            if (absentData) {
+                return handleSuccessMessage(res, 200, "Slot Deleted Successful")
+            }
+        }
+        else if (type == "present") {
+            const presentData = await present(user, date, store);
+            // date store er against a is_Complete true hobe
+        }
+        else{
             delete payloadOfSlotBook.type
             console.log(old_date, checkSlotEntry?.length, checkSlot.length);
             if (checkSlot.length <= checkSlotEntry?.length) {
@@ -88,23 +100,23 @@ exports.getUserWiseSlotBooked = async(req, res, next) =>{
         const patientId = req?.query?.patientId;
         const userWiseSlotBooking = await  userWiseSlot(patientId);
 
-        for (let index = 0; index < userWiseSlotBooking.length; index++) {
-            const userWiseSlotBookingelement = userWiseSlotBooking[index];
-            extractArr.push(
-              {
-                date:userWiseSlotBookingelement.date,
-                slot_id:userWiseSlotBookingelement?.slot_entry?.name,
-                time:userWiseSlotBookingelement?.slot_entry?.start_time,
-                full_name:userWiseSlotBookingelement?.User?.UserProfiles?.full_name,
-                phone:userWiseSlotBookingelement?.User?.phone
-              }
-            )
-          }
+        // for (let index = 0; index < userWiseSlotBooking.length; index++) {
+        //     const userWiseSlotBookingelement = userWiseSlotBooking[index];
+        //     extractArr.push(
+        //       {
+        //         date:userWiseSlotBookingelement.date,
+        //         slot_id:userWiseSlotBookingelement?.slot_entry?.name,
+        //         time:userWiseSlotBookingelement?.slot_entry?.start_time,
+        //         full_name:userWiseSlotBookingelement?.User?.UserProfiles?.full_name,
+        //         phone:userWiseSlotBookingelement?.User?.phone
+        //       }
+        //     )
+        //   }
 
         return res.status(200).json({
             'status': 200,
             'success': true,
-            'data': extractArr
+            'data': userWiseSlotBooking
         })
     } catch (error) {
         next(error)
