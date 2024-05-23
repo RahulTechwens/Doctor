@@ -333,7 +333,7 @@ exports.userWiseSlot = async (patientId) => {
   const result = packages.map((pkg) => ({
     packageName: pkg.packageName,
     status: pkg.status,
-    data: [],
+    patientWiseBookedData: [],
   }));
 
   allSlotEntry.forEach((slot) => {
