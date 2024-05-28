@@ -7,12 +7,12 @@ exports.transaction = async (req, res, next) => {
     const filter = req?.query?.filter;
     const offset = req?.query?.offset;
     const limit = req?.query?.limit;
+    const userId = req?.query?.userId
     let extractArr = []
-    const reportTrans = await  transactionReport(from_date_str, to_date_str, filter, offset, limit);
+    const reportTrans = await  transactionReport(from_date_str, to_date_str, filter, offset, limit, userId);
     if (reportTrans) {
       for (let index = 0; index < reportTrans.rows.length; index++) {
         const reportTransElement = reportTrans.rows[index];
-        console.log(reportTransElement);
         extractArr.push(
           {
             id:reportTransElement?.id,
@@ -23,7 +23,8 @@ exports.transaction = async (req, res, next) => {
             phone:reportTransElement?.User?.phone,
             email:reportTransElement?.User?.email,
             date:reportTransElement?.date,
-            time:reportTransElement?.time
+            time:reportTransElement?.time,
+            packageName:reportTransElement?.Package?.packageName
           }
         )
       }
