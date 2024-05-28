@@ -1,4 +1,5 @@
-const { slot_money } = require("../../../models/");
+const { slot_money, Package, User } = require("../../../models/");
+const { use } = require("./slotmoney.route");
 
 exports.addMoney = async (paylaod) => {
   let newPayload = { ...paylaod, total_amount: "5000" };
@@ -28,12 +29,53 @@ exports.addMoney = async (paylaod) => {
   }
 };
 
-exports.getMoney = async(user_id) =>{
-    const money = await slot_money.findAll({
-        where:{
-            user_id:user_id
+exports.getMoney = async (user_id) => {
+  const money = await Package.findAll({
+    attributes: ["id", "packageName", "status"],
+    include: [
+      {
+       
+        model: slot_money,
+        where: {
+          user_id: user_id,
         },
-    })
-    
-    return money
-}
+        required: false,
+      },
+    ],
+    nest: true,
+  });
+  console.log(money);
+  return money;
+};
+
+exports.getPackage = async (package_id) => {
+  try {
+    const package = await Package.findOne({
+      where: {
+        id: package_id,
+      },
+      raw: true,
+      nest: true,
+    });
+
+    return package;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getUser = async (user_id) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: user_id,
+      },
+      raw: true,
+      nest: true,
+    });
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};

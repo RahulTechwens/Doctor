@@ -24,6 +24,9 @@ module.exports = {
       amount: {
         type: Sequelize.STRING
       },
+      package_id:{
+        type:Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

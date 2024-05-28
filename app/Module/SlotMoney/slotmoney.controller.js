@@ -1,13 +1,30 @@
 const { handleSuccessMessage } = require("../../Utils/responseService")
-const { addMoney, getMoney } = require("./slotmoney.service")
+const { addMoney, getMoney, getPackage, getUser } = require("./slotmoney.service")
 
 exports.addSlotMoney = async(req, res, next) =>{
     try {
-        const {date, time, amount, user} = req?.body
+        const {date, time, amount, user, package_id} = req?.body
         const payload = {
-            date, time, amount, user_id:user
+            date, time, amount, user_id:user, package_id
+        }
+        const checkPackage = await getPackage(payload?.package_id);
+        if (!checkPackage) {
+            return res.status(404).json({
+                'status': 404, 
+                'success': false, 
+                'message': 'Package not found.'
+            })
         }
 
+        const checkUser = await getUser(payload?.user_id)
+
+        if (!checkUser) {
+            return res.status(404).json({
+                'status': 404, 
+                'success': false, 
+                'message': 'User not found.'
+            })
+        }
         const moneyAdd = await addMoney(payload)
         if (moneyAdd.stats) {
             return res.status(200).json({

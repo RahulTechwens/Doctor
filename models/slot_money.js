@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
   class slot_money extends Model {
     static associate(models) {
       this.belongsTo(models.User, {foreignKey: 'user_id'});
+      this.belongsTo(models.Package, {foreignKey: 'package_id'});
+
     }
   }
   slot_money.init({
@@ -14,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     time: DataTypes.STRING,
     total_amount: DataTypes.STRING,
     amount: DataTypes.STRING,
+    package_id:DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'slot_money',
