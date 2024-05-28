@@ -352,6 +352,15 @@ exports.userWiseSlot = async (patientId) => {
       })
       .filter((slot) => slot.slotBook !== undefined);
 
+      console.log(packageSlots);
+
+      for (let index = 0; index < packageSlots.length; index++) {
+        const elementPackageSlots = packageSlots[index];
+      
+        if (elementPackageSlots.slotBook && elementPackageSlots.slotBook.length > 0) {
+          elementPackageSlots.slotBook = elementPackageSlots.slotBook[0];
+        }
+      }      
     return {
       packageName: pkg.packageName,
       status: pkg.status,
