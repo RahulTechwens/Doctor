@@ -155,7 +155,6 @@ exports.entry = async (date_string, user_id, mode) => {
       nest: true,
     });
     if (countWithDate.length > 0) {
-      console.log("hello");
       is_user_booking = 1;
       element["is_user_booking"] = 1;
     } else {
@@ -339,34 +338,26 @@ exports.userWiseSlot = async (patientId) => {
   // });
   // })
 
-  let result = packages.map((pkg) => {
-    let packageSlots = allSlotEntry
+  const result = packages.map((pkg) => {
+    const packageSlots = allSlotEntry
       .map((slot) => {
-        let slotBook = slot.slotBook.filter(
-          (book) => book.package_id === pkg.id
-        );
-        return {
-          ...slot,
-          slotBook: slotBook.length > 0 ? slotBook : undefined,
-        };
-      })
-      .filter((slot) => slot.slotBook !== undefined);
-
-      console.log(packageSlots);
-
-      for (let index = 0; index < packageSlots.length; index++) {
-        const elementPackageSlots = packageSlots[index];
-      
-        if (elementPackageSlots.slotBook && elementPackageSlots.slotBook.length > 0) {
-          elementPackageSlots.slotBook = elementPackageSlots.slotBook[0];
+        const slotBook = slot.slotBook.filter((book) => book.package_id === pkg.id);
+        if (slotBook.length > 0) {
+          const { date: slot_date, time: slot_time } = slotBook[0];
+          return { ...slot, slotBook: undefined, slot_date, slot_time };
         }
-      }      
+        return null;
+      })
+      .filter((slot) => slot !== null);
+  
     return {
       packageName: pkg.packageName,
       status: pkg.status,
       patientWiseBookedData: packageSlots,
     };
   });
+  
+  
 
   // console.log(JSON.stringify(result, null, 2));
   return result;
