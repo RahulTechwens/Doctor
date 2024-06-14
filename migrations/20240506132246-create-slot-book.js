@@ -22,7 +22,7 @@ module.exports = {
         type: Sequelize.TEXT,
       },
       is_complete:{
-        type: Sequelize.BOOLEAN,
+        type: Sequelize.STRING,
       },
       package_id:{
         type:Sequelize.INTEGER,

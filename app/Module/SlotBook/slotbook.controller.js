@@ -1,5 +1,5 @@
 const { handleErrorMessage, handleSuccessMessage } = require("../../Utils/responseService")
-const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot, absent } = require("./slotbook.service")
+const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot, absent, present } = require("./slotbook.service")
 
 
 
@@ -31,7 +31,7 @@ exports.bookSlot = async (req, res, next) => {
                 if (checkEntry) {
                     return handleSuccessMessage(res, 200, "Slot Booked Successful",checkEntry)
                 }
-                    return handleSuccessMessage(res, 200, "make previous payment first",checkEntry)
+                    return handleSuccessMessage(res, 200, "Make the previous payment first or complete the scheduled date.",checkEntry)
             } else {
                 return handleErrorMessage(res, 400, "Slots are full.");
             }
@@ -49,7 +49,7 @@ exports.bookSlot = async (req, res, next) => {
 
             const absentData = await absent(user, date, store);
             if (absentData) {
-                return handleSuccessMessage(res, 200, "Slot Deleted Successful")
+                return handleSuccessMessage(res, 200, "Slot canceled Successful ")
             }
         }
         else if (type == "present") {
@@ -59,17 +59,22 @@ exports.bookSlot = async (req, res, next) => {
                 return handleSuccessMessage(res, 200, "Slot completed Successful")
             }
         }
-        else {
+        else if (type == "reschedule"){
             delete payloadOfSlotBook.type
-            console.log(old_date, checkSlotEntry?.length, checkSlot.length);
-            if (checkSlot.length <= checkSlotEntry?.length) {
+            console.log(old_date, payloadOfSlotBook);
+            // return
+            if (!checkSlot) {
                 const isReschedule = await reschedule(payloadOfSlotBook, old_date)
 
                 if (isReschedule) {
                     return handleSuccessMessage(res, 200, "Slot rescheduled Successful")
                 }
 
+            }else {
+                return handleErrorMessage(res, 400, "Slots is allready full.");
             }
+        }else{
+            return handleErrorMessage(res, 400, "Giving wrong type");
         }
     } catch (error) {
         console.log(error);

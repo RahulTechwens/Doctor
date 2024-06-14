@@ -8,7 +8,7 @@ const {
   slot_money,
 } = require("../../../models/");
 const { patient } = require("../Report/report.controller");
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const { raw } = require("express");
 
 // exports.book = async (payload) => {
@@ -44,14 +44,19 @@ const { raw } = require("express");
 
 exports.book = async (payload) => {
   try {
-
     const packageCount = await slot_book.findAll({
-      where: { user_id: payload.user_id },
+      where: {
+        user_id: payload.user_id,
+        is_complete: {
+          [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+        }
+      },
       order: [
         ['createdAt', 'DESC']
       ],
     });
-
+    // console.log(packageCount, "packageCount", { [Op.ne]: 'cancelled' });
+    // return packageCount
     let moneyCount = [];
     if (packageCount.length > 0) {
       moneyCount = await slot_money.findAll({
@@ -62,29 +67,44 @@ exports.book = async (payload) => {
       });
     }
 
-    
     let totalAmountByPackage = []
     if (moneyCount.length > 0) {
 
       totalAmountByPackage = moneyCount?.reduce((acc, cur) => acc + Number(cur?.amount), 0)
     }
-    const lastbookbyPackage = packageCount?.filter(it => it?.package_id == packageCount[0].package_id)
-    if (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) {
+    const lastbookbyPackage = packageCount?.filter(it => it?.package_id == packageCount[0]?.package_id)
+    const bookIsCompletebyPackage = packageCount?.filter(it => (it?.package_id == packageCount[0]?.package_id && it?.is_complete == 1))
+
+    console.log(bookIsCompletebyPackage.length, "bookIsCompletebyPackage", lastbookbyPackage.length, "lastbookbyPackage.length ", totalAmountByPackage);
+    console.log((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6), (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 6), (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 5));
+
+    if ((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 6)) {
       return false;
+
     }
-    if (packageCount.length % 5 == 0) {
-      payload.packageName_id = (packageCount.length / 5) + 1
+
+    console.log("else");
+    // return
+    if (packageCount.length % 6 == 0) {
+      console.log("if", packageCount.length / 6);
+
+      payload.packageName_id = (packageCount.length / 6) + 1
     } else {
-      payload.packageName_id = parseInt(packageCount.length / 5) + 1;
+      console.log("else", parseInt(packageCount.length / 6));
+
+      payload.packageName_id = parseInt(packageCount.length / 6) + 1;
     }
+    console.log(payload, "payload", packageCount[0]?.package_id);
 
     const countPackage = await Package.findOne({
       where: {
-        id: payload.package_id,
+        id: packageCount[0]?.package_id || payload.package_id,
         packageName: `Package ${Number(payload.packageName_id)}`,
         userId: payload.user_id,
       },
     });
+    console.log(countPackage, "countPackage");
+
 
     if (!countPackage) {
       const packageId = await Package.create({
@@ -95,7 +115,11 @@ exports.book = async (payload) => {
       if (packageId) {
         payload.package_id = packageId.id
       }
+    } else {
+      payload.package_id = countPackage?.id
     }
+    console.log(payload, "payload");
+    // return
     const bookslot = await slot_book.create(payload);
     return bookslot;
   } catch (error) {
@@ -143,9 +167,15 @@ exports.slotEntries = async (slot) => {
 };
 
 exports.reschedule = async (payload, old_date) => {
+  payload.is_complete = 'reschedule';
+  console.log(payload,"payload");
+  // return
   const rescheduleSlot = await slot_book.update(payload, {
     where: {
       date: old_date,
+      is_complete: {
+        [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.ne]: "completed" }]
+      }
     },
   });
 
@@ -153,14 +183,16 @@ exports.reschedule = async (payload, old_date) => {
 };
 exports.absent = async (user, date, store) => {
   try {
-    const deleteData = await slot_book.delete({
-      where: {
-        user_id: user,
-        date: date,
-        store_id: store,
-      },
-    });
-    return deleteData;
+    const absentData = await slot_book.update(
+      { is_complete: 'cancelled' },
+      {
+        where: {
+          user_id: user,
+          date: date,
+          store_id: store,
+        },
+      });
+    return absentData;
   } catch (error) {
     throw error;
   }
@@ -169,7 +201,7 @@ exports.absent = async (user, date, store) => {
 exports.present = async (user, date, store) => {
   try {
     const updateStatus = await slot_book.update(
-      { is_complete: 1 },
+      { is_complete: "completed" },
       {
         where: {
           user_id: user,
