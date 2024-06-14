@@ -9,6 +9,7 @@ exports.addMoney = async (paylaod) => {
     attribute: ["amount"],
     where: {
       user_id: paylaod?.user_id,
+      package_id: paylaod?.package_id
     },
     raw: true,
     nest: true,
@@ -34,7 +35,7 @@ exports.getMoney = async (user_id) => {
     attributes: ["id", "packageName", "status"],
     include: [
       {
-       
+
         model: slot_money,
         where: {
           user_id: user_id,

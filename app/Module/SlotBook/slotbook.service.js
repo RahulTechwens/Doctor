@@ -5,34 +5,101 @@ const {
   User,
   UserProfile,
   Package,
+  slot_money,
 } = require("../../../models/");
 const { patient } = require("../Report/report.controller");
+const { where } = require("sequelize");
+const { raw } = require("express");
+
+// exports.book = async (payload) => {
+//   try {
+//     const bookslot = await slot_book.create(payload);
+//     if (bookslot) {
+//       const packageCount = await slot_book.findAll({
+//         where: {
+//           package_id: payload?.package_id,
+//         },
+//       });
+
+//       if (packageCount.length == 6) {
+//         await Package.update(
+//           {
+//             status: 1,
+//           },
+//           {
+//             where: {
+//               id: payload?.package_id,
+//             },
+//           }
+//         );
+//       }
+//     }
+//     // const packageCount =
+//     return bookslot;
+//   } catch (error) {
+//     throw error;
+//   }
+// };
+
 
 exports.book = async (payload) => {
   try {
-    const bookslot = await slot_book.create(payload);
-    if (bookslot) {
-      const packageCount = await slot_book.findAll({
-        where: {
-          package_id: payload?.package_id,
-        },
+
+    const packageCount = await slot_book.findAll({
+      where: { user_id: payload.user_id },
+      order: [
+        ['createdAt', 'DESC']
+      ],
+    });
+
+    let moneyCount = [];
+    if (packageCount.length > 0) {
+      moneyCount = await slot_money.findAll({
+        where: { package_id: packageCount[0]?.package_id },
+        order: [
+          ['createdAt', 'DESC']
+        ],
       });
-      if (packageCount.length == 6) {
-        await Package.update(
-          {
-            status: 1,
-          },
-          {
-            where: {
-              id: payload?.package_id,
-            },
-          }
-        );
+    }
+
+    
+    let totalAmountByPackage = []
+    if (moneyCount.length > 0) {
+
+      totalAmountByPackage = moneyCount?.reduce((acc, cur) => acc + Number(cur?.amount), 0)
+    }
+    const lastbookbyPackage = packageCount?.filter(it => it?.package_id == packageCount[0].package_id)
+    if (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) {
+      return false;
+    }
+    if (packageCount.length % 5 == 0) {
+      payload.packageName_id = (packageCount.length / 5) + 1
+    } else {
+      payload.packageName_id = parseInt(packageCount.length / 5) + 1;
+    }
+
+    const countPackage = await Package.findOne({
+      where: {
+        id: payload.package_id,
+        packageName: `Package ${Number(payload.packageName_id)}`,
+        userId: payload.user_id,
+      },
+    });
+
+    if (!countPackage) {
+      const packageId = await Package.create({
+        packageName: `Package ${Number(payload.packageName_id)}`,
+        status: false,
+        userId: payload.user_id,
+      });
+      if (packageId) {
+        payload.package_id = packageId.id
       }
     }
-    // const packageCount =
+    const bookslot = await slot_book.create(payload);
     return bookslot;
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };
@@ -51,7 +118,7 @@ exports.checkbookingStatus = async (date, user) => {
 };
 
 exports.checkSlotEmpty = async (date, slot) => {
-  const checklotEmpty = await slot_book.findAll({
+  const checklotEmpty = await slot_book.findOne({
     where: {
       date: date,
       store_id: slot,
@@ -64,7 +131,7 @@ exports.checkSlotEmpty = async (date, slot) => {
 };
 
 exports.slotEntries = async (slot) => {
-  const slotEntryLimit = await slot_entries.findAll({
+  const slotEntryLimit = await slot_entries.findOne({
     where: {
       id: slot,
     },
@@ -349,15 +416,15 @@ exports.userWiseSlot = async (patientId) => {
         return null;
       })
       .filter((slot) => slot !== null);
-  
+
     return {
       packageName: pkg.packageName,
       status: pkg.status,
       patientWiseBookedData: packageSlots,
     };
   });
-  
-  
+
+
 
   // console.log(JSON.stringify(result, null, 2));
   return result;

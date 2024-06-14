@@ -87,6 +87,11 @@ exports.listUsers = async (search) => {
             },
           },
           {
+            email: {
+              [Op.like]: "%" + search + "%",
+            },
+          },
+          {
             "$UserProfiles.full_name$": {
               [Op.like]: "%" + search + "%",
             },
