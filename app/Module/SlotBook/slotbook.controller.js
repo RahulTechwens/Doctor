@@ -29,11 +29,11 @@ exports.bookSlot = async (req, res, next) => {
                 console.log("if block");
                 const checkEntry = await book(payloadOfSlotBook)
                 if (checkEntry) {
-                    return handleSuccessMessage(res, 200, "Slot Booked Successful",checkEntry)
+                    return handleSuccessMessage(res, 200, "Slot Booked Successful", checkEntry)
                 }
-                    return handleSuccessMessage(res, 200, "Make the previous payment first or complete the scheduled date.",checkEntry)
+                return handleSuccessMessage(res, 200, "Make the previous payment first or complete the scheduled date.", checkEntry)
             } else {
-                return handleErrorMessage(res, 400, "Slots are full.");
+                return handleErrorMessage(res, 400, "Slot is already booked.");
             }
 
             // if (checkSlot.length <= checkSlotEntry?.length) {
@@ -59,7 +59,7 @@ exports.bookSlot = async (req, res, next) => {
                 return handleSuccessMessage(res, 200, "Slot completed Successful")
             }
         }
-        else if (type == "reschedule"){
+        else if (type == "reschedule") {
             delete payloadOfSlotBook.type
             console.log(old_date, payloadOfSlotBook);
             // return
@@ -68,12 +68,14 @@ exports.bookSlot = async (req, res, next) => {
 
                 if (isReschedule) {
                     return handleSuccessMessage(res, 200, "Slot rescheduled Successful")
+                } else {
+                    return handleErrorMessage(res, 400, "unable to reschedule");
                 }
 
-            }else {
+            } else {
                 return handleErrorMessage(res, 400, "Slots is allready full.");
             }
-        }else{
+        } else {
             return handleErrorMessage(res, 400, "Giving wrong type");
         }
     } catch (error) {

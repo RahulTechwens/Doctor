@@ -76,9 +76,9 @@ exports.book = async (payload) => {
     const bookIsCompletebyPackage = packageCount?.filter(it => (it?.package_id == packageCount[0]?.package_id && it?.is_complete == 1))
 
     console.log(bookIsCompletebyPackage.length, "bookIsCompletebyPackage", lastbookbyPackage.length, "lastbookbyPackage.length ", totalAmountByPackage);
-    console.log((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6), (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 6), (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 5));
+    console.log((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6), (lastbookbyPackage.length >= 6 && bookIsCompletebyPackage.length < 6), (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 5));
 
-    if ((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 6)) {
+    if ((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6) || (lastbookbyPackage.length >= 6 && bookIsCompletebyPackage.length < 6)) {
       return false;
 
     }
@@ -119,7 +119,7 @@ exports.book = async (payload) => {
       payload.package_id = countPackage?.id
     }
     console.log(payload, "payload");
-    // return
+    payload.is_complete = 'pending'
     const bookslot = await slot_book.create(payload);
     return bookslot;
   } catch (error) {
@@ -133,6 +133,9 @@ exports.checkbookingStatus = async (date, user) => {
     where: {
       date: date,
       user_id: user,
+      is_complete: {
+        [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+      }
     },
     raw: true,
     nest: true,
@@ -146,6 +149,9 @@ exports.checkSlotEmpty = async (date, slot) => {
     where: {
       date: date,
       store_id: slot,
+      is_complete: {
+        [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+      }
     },
     raw: true,
     nest: true,
@@ -168,18 +174,49 @@ exports.slotEntries = async (slot) => {
 
 exports.reschedule = async (payload, old_date) => {
   payload.is_complete = 'reschedule';
-  console.log(payload,"payload");
+  console.log(payload, "payload");
   // return
-  const rescheduleSlot = await slot_book.update(payload, {
+  const searchSlotByUser = await slot_book.findAll({
     where: {
       date: old_date,
-      is_complete: {
-        [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.ne]: "completed" }]
-      }
-    },
-  });
+      user_id: payload?.user_id
+    }
+  })
+  if (!searchSlotByUser) {
+    console.log("if");
+    return false;
+  }
+  for (let i = 0; i < searchSlotByUser.length; i++) {
+    console.log(i, "in", searchSlotByUser.length);
 
-  return rescheduleSlot;
+    if (searchSlotByUser[i]?.is_complete == "cancelled" || searchSlotByUser[i]?.is_complete == "completed") {
+      console.log(i, "if");
+      continue;
+    } else {
+      console.log(i, "else");
+
+      console.log(searchSlotByUser[i], "searchSlotByUser[i]");
+      // return
+      const rescheduleSlot = await slot_book.update(payload, {
+        where: {
+          date: old_date,
+          [Op.and]: [
+            { is_complete: { [Op.ne]: "cancelled" } },
+            { is_complete: { [Op.ne]: "completed" } },
+            // { is_complete: { [Op.eq]: null } },
+          ]
+        },
+      });
+      console.log(rescheduleSlot, "rescheduleSlot", rescheduleSlot[0]);
+      // return
+      if (rescheduleSlot[0] == 1) {
+        return true;
+      }
+      return false;
+    }
+  }
+  // return 
+
 };
 exports.absent = async (user, date, store) => {
   try {
@@ -333,10 +370,10 @@ exports.userWiseSlot = async (patientId) => {
     let countBook = await slot_book.findAll({
       where: {
         store_id: element?.id,
+        is_complete: { [Op.ne]: "cancelled" }
         // date: date_string,
       },
     });
-
     let countWithDate =
       // await Package.findAll ({
       //   where:{
@@ -354,6 +391,7 @@ exports.userWiseSlot = async (patientId) => {
         where: {
           store_id: element?.id,
           // date: date_string,
+          is_complete: { [Op.ne]: "cancelled" },
           user_id: patientId,
         },
         include: [
@@ -364,6 +402,9 @@ exports.userWiseSlot = async (patientId) => {
         raw: true,
         nest: true,
       });
+
+    // console.log(countWithDate,"countWithDate");
+    // return
     if (countWithDate.length > 0) {
       is_user_booking = 1;
       element["is_user_booking"] = 1;
@@ -374,6 +415,7 @@ exports.userWiseSlot = async (patientId) => {
     element["slotBook"] = countWithDate;
   }
 
+  // return
   const packages = await Package.findAll({
     where: {
       userId: patientId,
@@ -436,19 +478,34 @@ exports.userWiseSlot = async (patientId) => {
   //   nest: true,
   // });
   // })
+  // console.log(allSlotEntry[0].slotBook[0],"allSlotEntry");
 
   const result = packages.map((pkg) => {
     const packageSlots = allSlotEntry
       .map((slot) => {
-        const slotBook = slot.slotBook.filter((book) => book.package_id === pkg.id);
+
+
+     let slotBook =[]
+      slot.slotBook.map((book) =>{
+        if(book.package_id === pkg.id){
+          slotBook.push({
+               date:book?.date,
+            store_id:book?.store_id,
+            is_complete:book?.is_complete,
+          })
+        }
+        });
         if (slotBook.length > 0) {
-          const { date: slot_date, time: slot_time } = slotBook[0];
-          return { ...slot, slotBook: undefined, slot_date, slot_time };
+          return {
+            ...slot, 
+            slotBook,
+           };
         }
         return null;
       })
       .filter((slot) => slot !== null);
 
+    // console.log(packageSlots,"packageSlots");
     return {
       packageName: pkg.packageName,
       status: pkg.status,
