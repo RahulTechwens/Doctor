@@ -331,7 +331,7 @@ exports.edit = async (date_string, user_id, mode) => {
     raw: true,
     nest: true,
   });
-  if (slot_data_date.length > 0) {
+  // if (slot_data_date.length > 0) {
     for (let index = 0; index < allSlotEntry.length; index++) {
       const element = allSlotEntry[index];
       let countBook = await slot_book.findAll({
@@ -365,7 +365,7 @@ exports.edit = async (date_string, user_id, mode) => {
         is_user_booking: countWithDate.length > 0 ? 1 : 0,
       });
     }
-  }
+  // }
 
   return slots;
 };
