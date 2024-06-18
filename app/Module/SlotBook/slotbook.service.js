@@ -182,7 +182,7 @@ exports.reschedule = async (payload, old_date) => {
       user_id: payload?.user_id
     }
   })
-console.log(searchSlotByUser,"searchSlotByUser",old_date,payload?.user_id);
+  console.log(searchSlotByUser, "searchSlotByUser", old_date, payload?.user_id);
   // return
 
   if (!searchSlotByUser) {
@@ -250,7 +250,10 @@ exports.present = async (user, date, store) => {
         },
       }
     );
-    return updateStatus;
+    if (updateStatus[0] !== 0) {
+      return true;
+    }
+    return false;
   } catch (error) {
     throw error;
   }
@@ -296,6 +299,8 @@ exports.entry = async (date_string, user_id, mode) => {
     if (countWithDate.length > 0) {
       is_user_booking = 1;
       element["is_user_booking"] = 1;
+      element["slot_book_date"] = countWithDate?.[0]?.date;
+
     } else {
       element["is_user_booking"] = 0;
     }
@@ -488,21 +493,21 @@ exports.userWiseSlot = async (patientId) => {
       .map((slot) => {
 
 
-     let slotBook =[]
-      slot.slotBook.map((book) =>{
-        if(book.package_id === pkg.id){
-          slotBook.push({
-               date:book?.date,
-            store_id:book?.store_id,
-            is_complete:book?.is_complete,
-          })
-        }
+        let slotBook = []
+        slot.slotBook.map((book) => {
+          if (book.package_id === pkg.id) {
+            slotBook.push({
+              date: book?.date,
+              store_id: book?.store_id,
+              is_complete: book?.is_complete,
+            })
+          }
         });
         if (slotBook.length > 0) {
           return {
-            ...slot, 
+            ...slot,
             slotBook,
-           };
+          };
         }
         return null;
       })

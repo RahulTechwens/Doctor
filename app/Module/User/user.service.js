@@ -121,7 +121,10 @@ exports.packageList = async(userId) =>{
     const list = Package.findAll({
       where:{
         userId:userId
-      }
+      },
+      order: [
+        ['createdAt', 'DESC']
+      ],
     });
     return list;
   } catch (error) {

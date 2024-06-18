@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const { slot_money, Package, User } = require("../../../models/");
 const { use } = require("./slotmoney.route");
 
@@ -32,6 +33,9 @@ exports.addMoney = async (paylaod) => {
 
 exports.getMoney = async (user_id) => {
   const money = await Package.findAll({
+    where: {
+      userId: user_id,
+    },
     attributes: ["id", "packageName", "status"],
     include: [
       {
