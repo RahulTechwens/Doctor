@@ -434,6 +434,9 @@ exports.userWiseSlot = async (patientId) => {
     where: {
       userId: patientId,
     },
+    order: [
+      ['createdAt', 'DESC']
+    ],
     raw: true,
     nest: true,
   });
