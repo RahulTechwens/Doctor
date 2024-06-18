@@ -284,6 +284,7 @@ exports.entry = async (date_string, user_id, mode) => {
       where: {
         store_id: element?.id,
         date: date_string,
+        is_complete: { [Op.ne]: "cancelled" }
       },
     });
 
@@ -292,6 +293,7 @@ exports.entry = async (date_string, user_id, mode) => {
         store_id: element?.id,
         date: date_string,
         user_id: user_id,
+        is_complete: { [Op.ne]: "cancelled" }
       },
       raw: true,
       nest: true,
@@ -336,6 +338,8 @@ exports.edit = async (date_string, user_id, mode) => {
         where: {
           store_id: element?.id,
           date: date_string,
+          is_complete: { [Op.ne]: "cancelled" }
+
         },
       });
 
@@ -344,6 +348,8 @@ exports.edit = async (date_string, user_id, mode) => {
           store_id: element?.id,
           date: date_string,
           user_id: user_id,
+          is_complete: { [Op.ne]: "cancelled" }
+
         },
         raw: true,
         nest: true,
