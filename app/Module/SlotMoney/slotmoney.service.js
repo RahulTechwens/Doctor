@@ -47,6 +47,9 @@ exports.getMoney = async (user_id) => {
         required: false,
       },
     ],
+    order: [
+      ['createdAt', 'DESC']
+    ],
     nest: true,
   });
   console.log(money);
