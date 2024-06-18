@@ -78,10 +78,21 @@ exports.patient = async (req, res, next) => {
 
 exports.patientInfoWhoIsBooked = async (req, res, next) => {
   try {
+    const from_date_str = req?.query?.from_date;
+    const to_date_str = req?.query?.to_date;
+    const filter = req?.query?.filter;
+    const type = req?.query?.type;
     const offset = req?.query?.offset;
     const limit = req?.query?.limit;
     const userId = req?.query?.userId
-    const userInfo = await userInfoBySlotBooked(offset, limit, userId);
+    const userInfo = await userInfoBySlotBooked(
+      from_date_str,
+      to_date_str,
+      filter,
+      type,
+      offset,
+      limit,
+      userId);
 
     return res.status(200).json({
       status: 200,

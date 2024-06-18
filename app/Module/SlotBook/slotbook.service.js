@@ -182,6 +182,9 @@ exports.reschedule = async (payload, old_date) => {
       user_id: payload?.user_id
     }
   })
+console.log(searchSlotByUser,"searchSlotByUser",old_date,payload?.user_id);
+  // return
+
   if (!searchSlotByUser) {
     console.log("if");
     return false;
@@ -209,7 +212,7 @@ exports.reschedule = async (payload, old_date) => {
       });
       console.log(rescheduleSlot, "rescheduleSlot", rescheduleSlot[0]);
       // return
-      if (rescheduleSlot[0] == 1) {
+      if (!rescheduleSlot[0] == 0) {
         return true;
       }
       return false;

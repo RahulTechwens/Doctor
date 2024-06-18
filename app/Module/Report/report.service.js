@@ -170,9 +170,18 @@ exports.patientBookngReport = async (
 };
 
 
-exports.userInfoBySlotBooked = async (offset, limit, userId) => {
+exports.userInfoBySlotBooked = async (
+  from_date,
+  to_date,
+  filter,
+  type,
+  offset,
+  limit,
+  userId
+) => {
   let getOffset, getLimit;
   let whereCondition = {};
+  let whereConds = {};
   if ((limit, offset)) {
     const paginate = getPagination(offset, limit);
     getOffset = Number(paginate.offset);
@@ -181,21 +190,61 @@ exports.userInfoBySlotBooked = async (offset, limit, userId) => {
   if (userId) {
     whereCondition = { ...whereCondition, id: userId }
   }
-  const userinfo = await User.findAll({
-    where: whereCondition,
-    include: [
-      {
-        model: slot_book,
-        attributes: [],
-        // attributes: ["id", "date", "package_id", "is_complete"],
-        required: true
-      }
-    ],
-    attributes: ["id", "user_name", "phone", "email"],
-    offset: getOffset||0,
-    limit: getLimit||10,
-    // raw: true,
-    // nest: true,
-  })
+  if (filter == "custom") {
+    if (from_date && to_date) {
+      whereConds = {
+        ...whereConds,
+        date: {
+          [Op.between]: [from_date, to_date],
+        },
+      };
+    }
+  }
+  if (filter == "today") {
+    let todays_date = moment().format("YYYY-MM-DD");
+    whereConds = { ...whereConds, date: todays_date };
+  }
+  if (filter == "all") {
+    whereConds = {};
+  }
+  let userinfo 
+  if (type=="Booking") {
+    userinfo= await User.findAll({
+      where: whereCondition,
+      include: [
+        {
+          model: slot_book,
+          where: whereConds,
+          attributes: [],
+          // attributes: ["id", "date", "package_id", "is_complete"],
+          required: true
+        }
+      ],
+      attributes: ["id", "user_name", "phone", "email"],
+      offset: getOffset || 0,
+      limit: getLimit || 10,
+      // raw: true,
+      // nest: true,
+    })
+  }else{
+    userinfo= await User.findAll({
+      where: whereCondition,
+      include: [
+        {
+          model: slot_money,
+          where: whereConds,
+          attributes: [],
+          // attributes: ["id", "date", "package_id", "is_complete"],
+          required: true
+        }
+      ],
+      attributes: ["id", "user_name", "phone", "email"],
+      offset: getOffset || 0,
+      limit: getLimit || 10,
+      // raw: true,
+      // nest: true,
+    })
+  }
+  
   return userinfo;
 }

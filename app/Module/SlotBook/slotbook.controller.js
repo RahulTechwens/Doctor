@@ -56,7 +56,7 @@ exports.bookSlot = async (req, res, next) => {
             const presentData = await present(user, date, store);
             // date store er against a is_Complete true hobe
             if (presentData) {
-                return handleSuccessMessage(res, 200, "Slot completed Successful")
+                return handleSuccessMessage(res, 200, "Slot completed Successful",presentData)
             }
         }
         else if (type == "reschedule") {
