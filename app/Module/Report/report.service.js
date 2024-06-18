@@ -1,4 +1,4 @@
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const {
   slot_money,
   User,
@@ -50,11 +50,11 @@ exports.transactionReport = async (
     };
   }
   const transaction_report_model_all = await slot_money.findAndCountAll({
-    where:whereCondition,
+    where: whereCondition,
     include: [
       {
         model: Package,
-        required:true
+        required: true
       },
       {
         model: User,
@@ -66,7 +66,7 @@ exports.transactionReport = async (
       },
     ],
     offset: getOffset,
-    limit: getLimit ,
+    limit: getLimit,
     raw: true,
     nest: true,
   });
@@ -110,7 +110,7 @@ exports.patientBookngReport = async (
             ],
           },
         ],
-        offset: getOffset || 1,
+        offset: getOffset || 0,
         limit: getLimit || 10,
         raw: true,
         nest: true,
@@ -137,7 +137,7 @@ exports.patientBookngReport = async (
           ],
         },
       ],
-      offset: getOffset || 1,
+      offset: getOffset || 0,
       limit: getLimit || 10,
       raw: true,
       nest: true,
@@ -159,11 +159,43 @@ exports.patientBookngReport = async (
           ],
         },
       ],
-      offset: getOffset || 1,
+      offset: getOffset || 0,
       limit: getLimit || 10,
       raw: true,
       nest: true,
     });
+
     return patient_bookng_report_model_all;
   }
 };
+
+
+exports.userInfoBySlotBooked = async (offset, limit, userId) => {
+  let getOffset, getLimit;
+  let whereCondition = {};
+  if ((limit, offset)) {
+    const paginate = getPagination(offset, limit);
+    getOffset = Number(paginate.offset);
+    getLimit = Number(paginate.limit);
+  }
+  if (userId) {
+    whereCondition = { ...whereCondition, id: userId }
+  }
+  const userinfo = await User.findAll({
+    where: whereCondition,
+    include: [
+      {
+        model: slot_book,
+        attributes: [],
+        // attributes: ["id", "date", "package_id", "is_complete"],
+        required: true
+      }
+    ],
+    attributes: ["id", "user_name", "phone", "email"],
+    offset: getOffset||0,
+    limit: getLimit||10,
+    // raw: true,
+    // nest: true,
+  })
+  return userinfo;
+}

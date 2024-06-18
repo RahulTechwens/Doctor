@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     is_complete: {
       type: DataTypes.STRING,
       validate: {
-        isIn: [['pending', 'completed', 'cancelled','reschedule']] // specify your allowed values here
+        isIn: [['pending', 'complete', 'cancelled','rescheduled']] // specify your allowed values here
       }
     },
     user_id: DataTypes.INTEGER,

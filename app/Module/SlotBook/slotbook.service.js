@@ -173,7 +173,7 @@ exports.slotEntries = async (slot) => {
 };
 
 exports.reschedule = async (payload, old_date) => {
-  payload.is_complete = 'reschedule';
+  payload.is_complete = 'rescheduled';
   console.log(payload, "payload");
   // return
   const searchSlotByUser = await slot_book.findAll({
@@ -189,7 +189,7 @@ exports.reschedule = async (payload, old_date) => {
   for (let i = 0; i < searchSlotByUser.length; i++) {
     console.log(i, "in", searchSlotByUser.length);
 
-    if (searchSlotByUser[i]?.is_complete == "cancelled" || searchSlotByUser[i]?.is_complete == "completed") {
+    if (searchSlotByUser[i]?.is_complete == "cancelled" || searchSlotByUser[i]?.is_complete == "complete") {
       console.log(i, "if");
       continue;
     } else {
@@ -202,7 +202,7 @@ exports.reschedule = async (payload, old_date) => {
           date: old_date,
           [Op.and]: [
             { is_complete: { [Op.ne]: "cancelled" } },
-            { is_complete: { [Op.ne]: "completed" } },
+            { is_complete: { [Op.ne]: "complete" } },
             // { is_complete: { [Op.eq]: null } },
           ]
         },
@@ -238,7 +238,7 @@ exports.absent = async (user, date, store) => {
 exports.present = async (user, date, store) => {
   try {
     const updateStatus = await slot_book.update(
-      { is_complete: "completed" },
+      { is_complete: "complete" },
       {
         where: {
           user_id: user,

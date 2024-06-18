@@ -6,6 +6,7 @@ const { validateResult } = require("../../Middleware/validateResult");
 
 router.get('/transaction/report', validateResult, reportController.transaction)
 router.get('/patient/report', validateResult, reportController.patient)
+router.get('/patientInfo/report', validateResult, reportController.patientInfoWhoIsBooked)
 
 
 module.exports = router;
