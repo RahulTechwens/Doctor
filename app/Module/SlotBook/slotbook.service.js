@@ -73,7 +73,7 @@ exports.book = async (payload) => {
       totalAmountByPackage = moneyCount?.reduce((acc, cur) => acc + Number(cur?.amount), 0)
     }
     const lastbookbyPackage = packageCount?.filter(it => it?.package_id == packageCount[0]?.package_id)
-    const bookIsCompletebyPackage = packageCount?.filter(it => (it?.package_id == packageCount[0]?.package_id && it?.is_complete == 1))
+    const bookIsCompletebyPackage = packageCount?.filter(it => (it?.package_id == packageCount[0]?.package_id && it?.is_complete == "complete"))
 
     console.log(bookIsCompletebyPackage.length, "bookIsCompletebyPackage", lastbookbyPackage.length, "lastbookbyPackage.length ", totalAmountByPackage);
     console.log((totalAmountByPackage < 5000 && lastbookbyPackage.length >= 6), (lastbookbyPackage.length >= 6 && bookIsCompletebyPackage.length < 6), (totalAmountByPackage < 5000 && lastbookbyPackage.length >= 5) || (lastbookbyPackage.length >= 5 && bookIsCompletebyPackage.length < 5));

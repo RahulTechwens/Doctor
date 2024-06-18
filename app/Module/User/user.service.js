@@ -5,14 +5,14 @@ exports.register = async (payload, userProfilePayload) => {
   try {
     let saveUser;
 
-    const getUser = await User.findOne({
-      where: {
-        phone: payload?.phone,
-      },
-      raw:true,
-      nest:true
-    });
-    if (!getUser) {
+    // const getUser = await User.findOne({
+    //   where: {
+    //     phone: payload?.phone,
+    //   },
+    //   raw:true,
+    //   nest:true
+    // });
+    // if (!getUser) {
       saveUser = await User.create(payload);
       await Package.create({
         packageName: `Package 1`,
@@ -26,19 +26,20 @@ exports.register = async (payload, userProfilePayload) => {
       if (saveUser) {
         return true;
       }
-    } else {
-      const countPackage = await Package.findAll({
-        where: {
-          userId: getUser?.id,
-        },
-      });
-      await Package.create({
-        packageName: `Package ${Number(countPackage.length) + 1}`,
-        status: false,
-        userId: getUser.id,
-      });
-      return true;
-    }
+    // }
+    //  else {
+    //   const countPackage = await Package.findAll({
+    //     where: {
+    //       userId: getUser?.id,
+    //     },
+    //   });
+    //   await Package.create({
+    //     packageName: `Package ${Number(countPackage.length) + 1}`,
+    //     status: false,
+    //     userId: getUser.id,
+    //   });
+    //   return true;
+    // }
    
     return false;
   } catch (error) {

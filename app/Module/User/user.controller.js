@@ -3,15 +3,16 @@ const { register, isExsistEmail, listUsers, isExsistPhone, packageList } = requi
 
 exports.createUser = async (req, res, next) =>{
     try {
-        const { email, phone, type, address, user_name} = req.body;
+        const { email, phone, type, address, full_name} = req.body;
         const userPayload = {
+            user_name:full_name,
             email,
             phone,
             type
         }
         const userProfilePayload = {
             address,
-            user_name
+            full_name
         }
         const chkEmail = await isExsistEmail(email)
         if (chkEmail) {
