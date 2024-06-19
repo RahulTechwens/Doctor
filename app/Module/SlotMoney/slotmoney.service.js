@@ -1,5 +1,5 @@
 const { where } = require("sequelize");
-const { slot_money, Package, User } = require("../../../models/");
+const { slot_money, Package, User, Sequelize } = require("../../../models/");
 const { use } = require("./slotmoney.route");
 
 exports.addMoney = async (paylaod) => {
@@ -36,7 +36,7 @@ exports.getMoney = async (user_id) => {
     where: {
       userId: user_id,
     },
-    attributes: ["id", "packageName", "status"],
+
     include: [
       {
 
@@ -46,6 +46,31 @@ exports.getMoney = async (user_id) => {
         },
         required: false,
       },
+    ],
+    attributes: ["id",
+      "packageName",
+      "status",
+      // [
+      //   Sequelize.literal(`
+      //     5000 - COALESCE((SELECT SUM(sm.amount) 
+      //     FROM
+      //      slot_moneys sm 
+      //     WHERE
+      //      sm.user_id = ${user_id} AND sm.package_id = Package.id), 0)`),
+      //   'dueMoney'
+      // ],
+      [
+        Sequelize.literal(`(
+          SELECT 
+            COALESCE(MAX(sm.total_amount), 5000) - COALESCE(SUM(sm.amount), 0) 
+          FROM 
+            slot_moneys sm 
+          WHERE 
+            sm.user_id = ${user_id} AND sm.package_id = Package.id
+        )`),
+        'dueMoney'
+      ],
+      
     ],
     order: [
       ['createdAt', 'DESC']
