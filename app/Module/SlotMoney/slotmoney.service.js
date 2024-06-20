@@ -1,17 +1,22 @@
 const { where } = require("sequelize");
 const { slot_money, Package, User, Sequelize } = require("../../../models/");
 const { use } = require("./slotmoney.route");
+const { addDueMoney } = require("./soltmoney.helper");
 
 exports.addMoney = async (paylaod) => {
-  let newPayload = { ...paylaod, total_amount: "5000" };
+  let newPayload = { ...paylaod, total_amount: paylaod?.type == 'Daily' ? '500' : "5000" };
   console.log(newPayload);
+  let whereCount = {
+    user_id: paylaod?.user_id,
+    package_id: paylaod?.package_id
+  }
+  if (paylaod?.type == 'Daily') {
+    whereCount = { ...whereCount, date: paylaod?.date }
+  }
   let summationOfMoney = 0;
   const calcMoney = await slot_money.findAll({
     attribute: ["amount"],
-    where: {
-      user_id: paylaod?.user_id,
-      package_id: paylaod?.package_id
-    },
+    where: whereCount,
     raw: true,
     nest: true,
   });
@@ -22,11 +27,10 @@ exports.addMoney = async (paylaod) => {
     }
   }
   let summation = Number(summationOfMoney) + Number(paylaod?.amount);
-
   if (summation > newPayload?.total_amount) {
-    return { stats: false, summation: summation };
+    return { stats: false, summation: summation, dueBlance: (newPayload?.total_amount - summationOfMoney )};
   } else {
-    const add = await slot_money.create({ ...paylaod, total_amount: "5000" });
+    const add = await slot_money.create({ ...paylaod, total_amount: paylaod?.type == 'Daily' ? '500' : "5000" });
     return { stats: true, summation: summation };
   }
 };
@@ -44,6 +48,32 @@ exports.getMoney = async (user_id) => {
         where: {
           user_id: user_id,
         },
+        attributes: [
+          'id',
+          'user_id',
+          'date',
+          'time',
+          'total_amount',
+          'amount',
+          'package_id',
+          'createdAt',
+          'updatedAt',
+          // [
+          //   Sequelize.literal(`
+          //     COALESCE(
+          //       (SELECT sm.total_amount FROM slot_moneys sm WHERE sm.id = slot_money.id), 
+          //       5000
+          //     ) - (
+          //       SELECT COALESCE(SUM(sm2.amount), 0) 
+          //       FROM slot_moneys sm2 
+          //       WHERE sm2.package_id = slot_money.package_id 
+          //       AND sm2.user_id = slot_money.user_id 
+          //       AND sm2.createdAt <= slot_money.createdAt
+          //     )
+          //   `),
+          //   'dueMoney'
+          // ]
+        ],
         required: false,
       },
     ],
@@ -70,15 +100,18 @@ exports.getMoney = async (user_id) => {
         )`),
         'dueMoney'
       ],
-      
+
     ],
     order: [
-      ['createdAt', 'DESC']
+      ['createdAt', 'DESC'],
+      [slot_money,'createdAt', 'DESC'],
     ],
     nest: true,
   });
-  console.log(money);
-  return money;
+ 
+  // return money
+  const jsonModify = addDueMoney(money);
+  return jsonModify;
 };
 
 exports.getPackage = async (package_id) => {

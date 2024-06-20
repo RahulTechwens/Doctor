@@ -1,5 +1,5 @@
 const { handleErrorMessage, handleSuccessMessage } = require("../../Utils/responseService")
-const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot, absent, present } = require("./slotbook.service")
+const { checkbookingStatus, checkSlotEmpty, slotEntries, book, reschedule, entry, edit, userWiseSlot, absent, present, getPackageById, dailyBook } = require("./slotbook.service")
 
 
 
@@ -15,7 +15,8 @@ exports.bookSlot = async (req, res, next) => {
         if (!checkSlotEntry) {
             return handleErrorMessage(res, 400, "You give the wrong Slots.");
         }
-        console.log(checkSlot, "checkSlot", checkSlotEntry, "checkSlotEntry");
+
+        // console.log(checkSlot, "checkSlot", checkSlotEntry, "checkSlotEntry");
         // return
         if (type == "entry") {
             delete payloadOfSlotBook.type
@@ -26,8 +27,19 @@ exports.bookSlot = async (req, res, next) => {
 
 
             if (!checkSlot) {
-                console.log("if block");
-                const checkEntry = await book(payloadOfSlotBook)
+                // console.log("if block");
+                const packageById = await getPackageById(package_id, user);
+                if (!packageById) {
+                    return handleErrorMessage(res, 400, "Opps you give the wrong package id.");
+                }
+                console.log(packageById, "packageById", packageById?.packageName.includes("Daily"));
+                let checkEntry
+                if (packageById?.packageName.includes("Daily")) {
+                    checkEntry = await dailyBook(payloadOfSlotBook)
+                } else {
+                    checkEntry = await book(payloadOfSlotBook)
+                }
+                // return
                 if (checkEntry) {
                     return handleSuccessMessage(res, 200, "Slot Booked Successful", checkEntry)
                 }
@@ -66,8 +78,15 @@ exports.bookSlot = async (req, res, next) => {
             console.log(old_date, payloadOfSlotBook);
             // return
             if (!checkSlot) {
-                const isReschedule = await reschedule(payloadOfSlotBook, old_date)
-
+                const packageById = await getPackageById(package_id, user);
+                if (!packageById) {
+                    return handleErrorMessage(res, 400, "Opps you give the wrong package id.");
+                }
+                console.log(packageById, "packageById", packageById?.packageName.includes("Daily"));
+                let isReschedule
+                if (!packageById?.packageName.includes("Daily")) {
+                    isReschedule = await reschedule(payloadOfSlotBook, old_date)
+                }
                 if (isReschedule) {
                     return handleSuccessMessage(res, 200, "Slot rescheduled Successful")
                 } else {

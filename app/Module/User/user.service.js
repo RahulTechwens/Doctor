@@ -13,19 +13,21 @@ exports.register = async (payload, userProfilePayload) => {
     //   nest:true
     // });
     // if (!getUser) {
-      saveUser = await User.create(payload);
-      await Package.create({
-        packageName: `Package 1`,
-        status: false,
-        userId: saveUser.id,
-      });
-      await UserProfile.create({
-        ...userProfilePayload,
-        user_id: saveUser.id,
-      });
-      if (saveUser) {
-        return true;
-      }
+    // console.log(payload,'payload');
+    // return
+    saveUser = await User.create(payload);
+    await Package.create({
+      packageName: payload?.type == 'daily' ? `Daily` : `Package 1`,
+      status: false,
+      userId: saveUser.id,
+    });
+    await UserProfile.create({
+      ...userProfilePayload,
+      user_id: saveUser.id,
+    });
+    if (saveUser) {
+      return true;
+    }
     // }
     //  else {
     //   const countPackage = await Package.findAll({
@@ -40,7 +42,7 @@ exports.register = async (payload, userProfilePayload) => {
     //   });
     //   return true;
     // }
-   
+
     return false;
   } catch (error) {
     throw error;
@@ -116,11 +118,11 @@ exports.listUsers = async (search) => {
   }
 };
 
-exports.packageList = async(userId) =>{
+exports.packageList = async (userId) => {
   try {
     const list = Package.findAll({
-      where:{
-        userId:userId
+      where: {
+        userId: userId
       },
       order: [
         ['createdAt', 'DESC']

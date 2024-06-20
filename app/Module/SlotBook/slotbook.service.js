@@ -332,39 +332,39 @@ exports.edit = async (date_string, user_id, mode) => {
     nest: true,
   });
   // if (slot_data_date.length > 0) {
-    for (let index = 0; index < allSlotEntry.length; index++) {
-      const element = allSlotEntry[index];
-      let countBook = await slot_book.findAll({
-        where: {
-          store_id: element?.id,
-          date: date_string,
-          is_complete: { [Op.ne]: "cancelled" }
+  for (let index = 0; index < allSlotEntry.length; index++) {
+    const element = allSlotEntry[index];
+    let countBook = await slot_book.findAll({
+      where: {
+        store_id: element?.id,
+        date: date_string,
+        is_complete: { [Op.ne]: "cancelled" }
 
-        },
-      });
+      },
+    });
 
-      let countWithDate = await slot_book.findAll({
-        where: {
-          store_id: element?.id,
-          date: date_string,
-          user_id: user_id,
-          is_complete: { [Op.ne]: "cancelled" }
+    let countWithDate = await slot_book.findAll({
+      where: {
+        store_id: element?.id,
+        date: date_string,
+        user_id: user_id,
+        is_complete: { [Op.ne]: "cancelled" }
 
-        },
-        raw: true,
-        nest: true,
-      });
-      slots.push({
-        id: element?.id,
-        name: element?.name,
-        date: element?.date,
-        start_time: element?.start_time,
-        end_time: element?.end_time,
-        limit: element?.limit,
-        seat_available: element?.limit - countBook.length,
-        is_user_booking: countWithDate.length > 0 ? 1 : 0,
-      });
-    }
+      },
+      raw: true,
+      nest: true,
+    });
+    slots.push({
+      id: element?.id,
+      name: element?.name,
+      date: element?.date,
+      start_time: element?.start_time,
+      end_time: element?.end_time,
+      limit: element?.limit,
+      seat_available: element?.limit - countBook.length,
+      is_user_booking: countWithDate.length > 0 ? 1 : 0,
+    });
+  }
   // }
 
   return slots;
@@ -535,3 +535,92 @@ exports.userWiseSlot = async (patientId) => {
   // console.log(JSON.stringify(result, null, 2));
   return result;
 };
+
+exports.getPackageById = async (Id, user) => {
+  const packageById = await Package.findOne({
+    where: {
+      id: Id,
+      userId: user
+    },
+    raw: true,
+    nest: true
+  })
+  return packageById
+}
+
+exports.dailyBook = async (payload) => {
+  console.log(payload, "payload");
+  const packageCount = await slot_book.findAll({
+    where: {
+      user_id: payload.user_id,
+      // is_complete: {
+      //   [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+      // }
+    },
+    order: [
+      ['createdAt', 'DESC']
+    ],
+  });
+  // console.log(packageCount, packageCount);
+  let moneyCount;
+  payload.packageName_id = 1
+  if (packageCount.length > 0) {
+    const bookbyPackageCountExcludeCancel = packageCount?.filter(it => it?.is_complete != "cancelled");
+
+    moneyCount = await slot_money.findOne({
+      where: {
+        package_id: bookbyPackageCountExcludeCancel[0]?.package_id,
+        date:bookbyPackageCountExcludeCancel[0]?.date
+      },
+      order: [
+        ['createdAt', 'DESC']
+      ],
+    });
+    let lastPackageAmount = 0
+    if (moneyCount) {
+      lastPackageAmount = moneyCount?.amount
+    }
+
+    const bookIsCompletebyPackage = packageCount?.[0]?.is_complete
+
+    // console.log(bookIsCompletebyPackage, "bookIsCompletebyPackage", lastPackageAmount);
+    console.log(lastPackageAmount < 500, (bookIsCompletebyPackage != 'complete' && bookIsCompletebyPackage != 'cancelled'));
+
+    if ((lastPackageAmount < 500 || (bookIsCompletebyPackage != 'complete' && bookIsCompletebyPackage != 'cancelled'))) {
+      
+      return false;
+    }
+    // payload.packageName_id = bookbyPackageCountExcludeCancel.length + 1
+  }
+
+  console.log(packageCount[0]?.package_id, payload.package_id, packageCount.length, payload.packageName_id);
+  // return
+
+
+
+  const countPackage = await Package.findOne({
+    where: {
+      id: packageCount[0]?.package_id || payload.package_id,
+      packageName: `Daily`,
+      userId: payload.user_id,
+    },
+  });
+  // console.log(countPackage, "countPackage");
+
+  if (!countPackage) {
+    const packageId = await Package.create({
+      packageName: `Daily`,
+      status: false,
+      userId: payload.user_id,
+    });
+    if (packageId) {
+      payload.package_id = packageId.id
+    }
+  } else {
+    payload.package_id = countPackage?.id
+  }
+  console.log(payload, "payload");
+  payload.is_complete = 'pending'
+  const bookslot = await slot_book.create(payload);
+  return bookslot;
+}

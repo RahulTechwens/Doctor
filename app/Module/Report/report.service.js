@@ -78,9 +78,11 @@ exports.patientBookngReport = async (
   to_date,
   filter,
   offset,
-  limit
+  limit,
+  userId
 ) => {
   let getOffset, getLimit;
+  let whereCondition = {};
 
   if ((limit, offset)) {
     const paginate = getPagination(offset, limit);
@@ -91,12 +93,29 @@ exports.patientBookngReport = async (
 
   if (filter == "custom") {
     if (from_date && to_date) {
-      const patient_bookng_report_model_custom = await slot_book.findAll({
-        where: {
-          date: {
-            [Op.between]: [from_date, to_date],
-          },
+      whereCondition = {
+        ...whereCondition,
+        date: {
+          [Op.between]: [from_date, to_date],
         },
+      };
+    }
+  }
+  if (filter == "today") {
+    let todays_date = moment().format("YYYY-MM-DD");
+    whereCondition = { ...whereCondition, date: todays_date };
+  }
+  if (filter == "all") {
+    whereCondition = {};
+  }
+  if (userId) {
+    whereCondition = {
+      ...whereCondition,
+      user_id: userId,
+    };
+  }
+      const patient_bookng_report= await slot_book.findAll({
+        where: whereCondition,
         include: [
           {
             model: slot_entries,
@@ -115,58 +134,11 @@ exports.patientBookngReport = async (
         raw: true,
         nest: true,
       });
-      return patient_bookng_report_model_custom;
-    }
-  }
-  if (filter == "today") {
-    let todays_date = moment().format("YYYY-MM-DD");
-    const patient_bookng_report_model_today = await slot_book.findAll({
-      where: {
-        date: todays_date,
-      },
-      include: [
-        {
-          model: slot_entries,
-        },
-        {
-          model: User,
-          include: [
-            {
-              model: UserProfile,
-            },
-          ],
-        },
-      ],
-      offset: getOffset || 0,
-      limit: getLimit || 10,
-      raw: true,
-      nest: true,
-    });
-    return patient_bookng_report_model_today;
-  }
-  if (filter == "all") {
-    const patient_bookng_report_model_all = await slot_book.findAll({
-      include: [
-        {
-          model: slot_entries,
-        },
-        {
-          model: User,
-          include: [
-            {
-              model: UserProfile,
-            },
-          ],
-        },
-      ],
-      offset: getOffset || 0,
-      limit: getLimit || 10,
-      raw: true,
-      nest: true,
-    });
+     
+ console.log(patient_bookng_report,"patient_bookng_report");
 
-    return patient_bookng_report_model_all;
-  }
+    return patient_bookng_report;
+  
 };
 
 
