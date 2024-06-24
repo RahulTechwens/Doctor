@@ -10,6 +10,7 @@ const {
 const { patient } = require("../Report/report.controller");
 const { where, Op } = require("sequelize");
 const { raw } = require("express");
+const { packageFound } = require("../User/user.service");
 
 // exports.book = async (payload) => {
 //   try {
@@ -44,13 +45,20 @@ const { raw } = require("express");
 
 exports.book = async (payload) => {
   try {
+    let whereCond = {
+      user_id: payload.user_id,
+      is_complete: {
+        [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+      }
+    }
+    const getPackage = await packageFound({ id: payload.user_id, type: "Daily" });
+    // if (userData.type.includes('daily')) {
+    console.log(getPackage, "getPackage");
+    if (getPackage) {
+      whereCond = { ...whereCond, package_id:{ [Op.ne]: getPackage?.id }}
+    }
     const packageCount = await slot_book.findAll({
-      where: {
-        user_id: payload.user_id,
-        is_complete: {
-          [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
-        }
-      },
+      where: whereCond,
       order: [
         ['createdAt', 'DESC']
       ],
@@ -542,6 +550,11 @@ exports.getPackageById = async (Id, user) => {
       id: Id,
       userId: user
     },
+    include: [
+      {
+        model: User
+      }
+    ],
     raw: true,
     nest: true
   })
@@ -552,7 +565,8 @@ exports.dailyBook = async (payload) => {
   console.log(payload, "payload");
   const packageCount = await slot_book.findAll({
     where: {
-      user_id: payload.user_id,
+      user_id: payload?.user_id,
+      package_id: payload?.package_id
       // is_complete: {
       //   [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
       // }
@@ -570,7 +584,7 @@ exports.dailyBook = async (payload) => {
     moneyCount = await slot_money.findOne({
       where: {
         package_id: bookbyPackageCountExcludeCancel[0]?.package_id,
-        date:bookbyPackageCountExcludeCancel[0]?.date
+        date: bookbyPackageCountExcludeCancel[0]?.date
       },
       order: [
         ['createdAt', 'DESC']
@@ -587,7 +601,7 @@ exports.dailyBook = async (payload) => {
     console.log(lastPackageAmount < 500, (bookIsCompletebyPackage != 'complete' && bookIsCompletebyPackage != 'cancelled'));
 
     if ((lastPackageAmount < 500 || (bookIsCompletebyPackage != 'complete' && bookIsCompletebyPackage != 'cancelled'))) {
-      
+
       return false;
     }
     // payload.packageName_id = bookbyPackageCountExcludeCancel.length + 1

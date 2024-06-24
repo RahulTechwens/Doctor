@@ -8,9 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       this.hasMany(models.slot_book, {foreignKey: 'package_id'});
       this.hasMany(models.slot_money, {foreignKey: 'package_id'});
-
-      
-
+      this.belongsTo(models.User, {foreignKey: 'userId'});
     }
   }
   Package.init({

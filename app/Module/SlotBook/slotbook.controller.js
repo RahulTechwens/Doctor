@@ -29,9 +29,12 @@ exports.bookSlot = async (req, res, next) => {
             if (!checkSlot) {
                 // console.log("if block");
                 const packageById = await getPackageById(package_id, user);
-                if (!packageById) {
+                console.log(packageById, "packageById",packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase()));
+                if (!packageById || !packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase())) {
                     return handleErrorMessage(res, 400, "Opps you give the wrong package id.");
                 }
+                // return
+
                 console.log(packageById, "packageById", packageById?.packageName.includes("Daily"));
                 let checkEntry
                 if (packageById?.packageName.includes("Daily")) {

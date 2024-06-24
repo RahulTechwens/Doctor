@@ -9,6 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       this.hasMany(models.UserProfile, {foreignKey: 'user_id'});
       this.hasMany(models.slot_book, {foreignKey: 'user_id'});
       this.hasMany(models.slot_money, {foreignKey: 'user_id'});
+      this.hasMany(models.Package, {foreignKey: 'userId'});
 
 
     }

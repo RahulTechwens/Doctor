@@ -1,5 +1,5 @@
-const { User, UserProfile, Package } = require("../../../models/");
-const { Op } = require("sequelize");
+const { User, UserProfile, Package, slot_money, slot_book } = require("../../../models/");
+const { Op, where } = require("sequelize");
 
 exports.register = async (payload, userProfilePayload) => {
   try {
@@ -124,6 +124,13 @@ exports.packageList = async (userId) => {
       where: {
         userId: userId
       },
+      include: [
+        {
+          model: slot_book,
+          attributes: ["id"],
+          // required: true
+        }
+      ],
       order: [
         ['createdAt', 'DESC']
       ],
@@ -132,4 +139,124 @@ exports.packageList = async (userId) => {
   } catch (error) {
     throw error
   }
+}
+
+exports.isExsistUser = async (id) => {
+  try {
+    const checkUser = await User.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    return checkUser;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.updateUser = async (id, payload, userProfilePayload) => {
+  try {
+    let saveUser;
+
+    const getPackage = await Package.findOne({
+      where: {
+        userId: id,
+        packageName: {
+          [Op.like]: `%${payload.type}%`
+        }
+      },
+      raw: true,
+      nest: true
+    });
+
+    console.log(payload, 'payload', getPackage, "getPackage");
+    // return
+    saveUser = await User.update(payload, { where: { id: id } });
+    if (!getPackage) {
+      await Package.create({
+        packageName: payload?.type == 'daily' ? `Daily` : `Package 1`,
+        status: true,
+        userId: id,
+      });
+    }
+    await UserProfile.update({
+      ...userProfilePayload,
+    }, {
+      where: {
+        user_id: id,
+      }
+    });
+    if (saveUser) {
+      return true;
+    }
+    // }
+    //  else {
+    //   const countPackage = await Package.findAll({
+    //     where: {
+    //       userId: getUser?.id,
+    //     },
+    //   });
+    //   await Package.create({
+    //     packageName: `Package ${Number(countPackage.length) + 1}`,
+    //     status: false,
+    //     userId: getUser.id,
+    //   });
+    //   return true;
+    // }
+
+    return false;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.packageFound = async (payload) => {
+  const getPackage = await Package.findOne({
+    where: {
+      userId: payload?.id,
+      // [Op.and]: fn('LOWER', col('packageName')), payload.type.toLowerCase()
+      packageName: {
+        [Op.like]: `%${payload.type}%`
+      }
+    },
+
+    order: [
+      ['createdAt', 'DESC'],
+    ],
+    raw: true,
+    nest: true
+  });
+
+  // console.log(payload, 'payload', getPackage, "getPackage");
+  return getPackage
+}
+
+exports.getBookSlots = async (payload) => {
+  const getBookSlot = await slot_book.findAll({
+    where: {
+      user_id: payload?.id,
+      // [Op.and]: fn('LOWER', col('packageName')), payload.type.toLowerCase()
+      package_id: payload?.package_id
+    },
+    order: [
+      ['createdAt', 'DESC'],
+    ],
+    raw: true,
+    nest: true
+  });
+
+  // console.log(payload, 'payload', getPackage, "getPackage");
+  return getBookSlot
+}
+
+exports.getBookSlotMoney = async (payload) => {
+  const getBookSlot = await slot_money.findAll({
+    where: payload,
+    order: [
+      ['createdAt', 'DESC']
+    ],
+  });
+  // console.log(payload, 'payload', getPackage, "getPackage");
+  return getBookSlot
 }

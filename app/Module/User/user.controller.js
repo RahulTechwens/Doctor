@@ -1,11 +1,11 @@
 const { handleSuccessMessage, handleErrorMessage } = require("../../Utils/responseService");
-const { register, isExsistEmail, listUsers, isExsistPhone, packageList } = require("./user.service");
+const { register, isExsistEmail, listUsers, isExsistPhone, packageList, isExsistUser, updateUser } = require("./user.service");
 
-exports.createUser = async (req, res, next) =>{
+exports.createUser = async (req, res, next) => {
     try {
-        const { email, phone, type, address, full_name} = req.body;
+        const { email, phone, type, address, full_name } = req.body;
         const userPayload = {
-            user_name:full_name,
+            user_name: full_name,
             email,
             phone,
             type
@@ -22,7 +22,7 @@ exports.createUser = async (req, res, next) =>{
         if (chkPhone) {
             return handleErrorMessage(res, 400, "Phone already exists")
         }
-        const checkRegister = await register(userPayload,userProfilePayload);
+        const checkRegister = await register(userPayload, userProfilePayload);
         if (checkRegister) {
             return handleSuccessMessage(res, 200, "User created successfully")
         }
@@ -32,7 +32,7 @@ exports.createUser = async (req, res, next) =>{
     }
 }
 
-exports.listUser = async (req, res, next) =>{
+exports.listUser = async (req, res, next) => {
     try {
 
         const search = req?.query?.search
@@ -47,7 +47,7 @@ exports.listUser = async (req, res, next) =>{
     }
 }
 
-exports.listPackage = async (req, res, next) =>{
+exports.listPackage = async (req, res, next) => {
     try {
         const userId = req?.params.userId
         const list = await packageList(userId);
@@ -56,4 +56,31 @@ exports.listPackage = async (req, res, next) =>{
         next(error)
     }
 }
+
+exports.updateUser = async (req, res, next) => {
+    try {
+        const { id, type, address, full_name } = req.body;
+        const userPayload = {
+            user_name: full_name,
+            type
+        }
+        const userProfilePayload = {
+            address,
+            full_name
+        }
+        const chkEmail = await isExsistUser(id)
+        if (!chkEmail) {
+            return handleErrorMessage(res, 404, "User not found")
+        }
+
+        const checkRegister = await updateUser(id, userPayload, userProfilePayload);
+        if (checkRegister) {
+            return handleSuccessMessage(res, 200, "User updated successfully")
+        }
+    } catch (error) {
+        console.log(error);
+        next(error)
+    }
+}
 // http://13.232.87.199/
+
