@@ -24,7 +24,7 @@ exports.createUser = async (req, res, next) => {
         }
         const checkRegister = await register(userPayload, userProfilePayload);
         if (checkRegister) {
-            return handleSuccessMessage(res, 200, "User created successfully")
+            return handleSuccessMessage(res, 200, "Patient registered successfully")
         }
 
     } catch (error) {

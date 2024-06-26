@@ -74,7 +74,7 @@ exports.getMoney = async (user_id) => {
           //   'dueMoney'
           // ]
         ],
-        required: false,
+        required: true,
       },
     ],
     attributes: ["id",

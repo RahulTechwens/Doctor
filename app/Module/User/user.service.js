@@ -109,6 +109,9 @@ exports.listUsers = async (search) => {
           model: UserProfile,
         },
       ],
+      order: [
+        ['createdAt', 'DESC']
+      ],
       raw: true,
       nest: true,
     });
@@ -234,11 +237,7 @@ exports.packageFound = async (payload) => {
 
 exports.getBookSlots = async (payload) => {
   const getBookSlot = await slot_book.findAll({
-    where: {
-      user_id: payload?.id,
-      // [Op.and]: fn('LOWER', col('packageName')), payload.type.toLowerCase()
-      package_id: payload?.package_id
-    },
+    where: payload,
     order: [
       ['createdAt', 'DESC'],
     ],

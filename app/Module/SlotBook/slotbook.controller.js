@@ -13,7 +13,7 @@ exports.bookSlot = async (req, res, next) => {
         const checkSlot = await checkSlotEmpty(payloadOfSlotBook?.date, payloadOfSlotBook?.store_id);
         const checkSlotEntry = await slotEntries(payloadOfSlotBook?.store_id);
         if (!checkSlotEntry) {
-            return handleErrorMessage(res, 400, "You give the wrong Slots.");
+            return handleErrorMessage(res, 400, "Please select a slot.");
         }
 
         // console.log(checkSlot, "checkSlot", checkSlotEntry, "checkSlotEntry");
@@ -44,9 +44,9 @@ exports.bookSlot = async (req, res, next) => {
                 }
                 // return
                 if (checkEntry) {
-                    return handleSuccessMessage(res, 200, "Slot Booked Successful", checkEntry)
+                    return handleSuccessMessage(res, 200, "Slot Booked Successfully", checkEntry)
                 }
-                return handleSuccessMessage(res, 200, "Make the previous payment first or complete the scheduled date.", checkEntry)
+                return handleSuccessMessage(res, 200, "Please complete previous payment/booking before updating.", checkEntry)
             } else {
                 return handleErrorMessage(res, 400, "Slot is already booked.");
             }
@@ -54,7 +54,7 @@ exports.bookSlot = async (req, res, next) => {
             // if (checkSlot.length <= checkSlotEntry?.length) {
             //     const checkEntry = await book(payloadOfSlotBook)
             //     if (checkEntry) {
-            //         return handleSuccessMessage(res, 200, "Slot Booked Successful")
+            //         return handleSuccessMessage(res, 200, "Slot Booked Successfully")
             //     }
             // }else{
             //     return handleErrorMessage(res, 400, "Slots are full.");
@@ -64,14 +64,15 @@ exports.bookSlot = async (req, res, next) => {
 
             const absentData = await absent(user, date, store);
             if (absentData) {
-                return handleSuccessMessage(res, 200, "Slot canceled Successful ")
+                return handleSuccessMessage(res, 200, "Slot Cancelled Successfully ")
             }
         }
         else if (type == "present") {
             const presentData = await present(user, date, store);
             // date store er against a is_Complete true hobe
+            console.log(presentData,"presentData");
             if (presentData) {
-                return handleSuccessMessage(res, 200, "Slot completed Successful", presentData)
+                return handleSuccessMessage(res, 200, "Slot Completed Successfully", presentData)
             } else {
                 return handleErrorMessage(res, 400, "Action is not complete please try again");
             }
@@ -82,7 +83,7 @@ exports.bookSlot = async (req, res, next) => {
             // return
             if (!checkSlot) {
                 const packageById = await getPackageById(package_id, user);
-                if (!packageById) {
+                if (!packageById || !packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase())) {
                     return handleErrorMessage(res, 400, "Opps you give the wrong package id.");
                 }
                 console.log(packageById, "packageById", packageById?.packageName.includes("Daily"));
@@ -91,13 +92,13 @@ exports.bookSlot = async (req, res, next) => {
                     isReschedule = await reschedule(payloadOfSlotBook, old_date)
                 }
                 if (isReschedule) {
-                    return handleSuccessMessage(res, 200, "Slot rescheduled Successful")
+                    return handleSuccessMessage(res, 200, "Slot Rescheduled Successfully")
                 } else {
                     return handleErrorMessage(res, 400, "unable to reschedule");
                 }
 
             } else {
-                return handleErrorMessage(res, 400, "Slots is allready full.");
+                return handleErrorMessage(res, 200, "Slots is allready full.");
             }
         } else {
             return handleErrorMessage(res, 400, "Giving wrong type");

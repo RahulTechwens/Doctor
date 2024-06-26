@@ -55,7 +55,7 @@ exports.book = async (payload) => {
     // if (userData.type.includes('daily')) {
     console.log(getPackage, "getPackage");
     if (getPackage) {
-      whereCond = { ...whereCond, package_id:{ [Op.ne]: getPackage?.id }}
+      whereCond = { ...whereCond, package_id: { [Op.ne]: getPackage?.id } }
     }
     const packageCount = await slot_book.findAll({
       where: whereCond,
@@ -117,7 +117,7 @@ exports.book = async (payload) => {
     if (!countPackage) {
       const packageId = await Package.create({
         packageName: `Package ${Number(payload.packageName_id)}`,
-        status: false,
+        status: true,
         userId: payload.user_id,
       });
       if (packageId) {
@@ -279,6 +279,7 @@ exports.present = async (user, date, store) => {
 exports.entry = async (date_string, user_id, mode) => {
   let is_user_booking = 0;
 
+
   const allSlotEntry = await slot_entries.findAll({
     raw: true,
     nest: true,
@@ -315,6 +316,15 @@ exports.entry = async (date_string, user_id, mode) => {
       element["is_user_booking"] = 0;
     }
     element["seat_available"] = allSlotEntry[0]["limit"] - countBook?.length;
+
+
+    // newly added code
+    console.log(countBook.length, "ll");
+    if (countBook.length > 0) {
+      element['slot_avaliability'] = 1
+    } else {
+      element['slot_avaliability'] = 0
+    }
   }
 
   // console.log(allSlotEntry);
@@ -362,6 +372,14 @@ exports.edit = async (date_string, user_id, mode) => {
       raw: true,
       nest: true,
     });
+
+    console.log(countBook.length, "ll");
+    if (countBook.length > 0) {
+      element['slot_avaliability'] = 1
+    } else {
+      element['slot_avaliability'] = 0
+    }
+
     slots.push({
       id: element?.id,
       name: element?.name,
@@ -371,6 +389,7 @@ exports.edit = async (date_string, user_id, mode) => {
       limit: element?.limit,
       seat_available: element?.limit - countBook.length,
       is_user_booking: countWithDate.length > 0 ? 1 : 0,
+      slot_avaliability: element?.slot_avaliability
     });
   }
   // }
@@ -541,7 +560,7 @@ exports.userWiseSlot = async (patientId) => {
 
 
   // console.log(JSON.stringify(result, null, 2));
-  return result;
+  return result.filter((slot) => slot?.patientWiseBookedData?.length > 0);
 };
 
 exports.getPackageById = async (Id, user) => {
@@ -578,10 +597,11 @@ exports.dailyBook = async (payload) => {
   // console.log(packageCount, packageCount);
   let moneyCount;
   payload.packageName_id = 1
-  if (packageCount.length > 0) {
-    const bookbyPackageCountExcludeCancel = packageCount?.filter(it => it?.is_complete != "cancelled");
-
-    moneyCount = await slot_money.findOne({
+  let bookbyPackageCountExcludeCancel = packageCount?.filter(it => it.is_complete != 'cancelled');
+  if (packageCount.length > 0 && bookbyPackageCountExcludeCancel.length > 0) {
+    // const bookbyPackageCountExcludeCancel = packageCount?.filter(it => it?.dataValues?.is_complete != "cancelled");
+    console.log(packageCount, "bookbyPackageCountExcludeCancel");
+    moneyCount = await slot_money.findAll({
       where: {
         package_id: bookbyPackageCountExcludeCancel[0]?.package_id,
         date: bookbyPackageCountExcludeCancel[0]?.date
@@ -592,7 +612,9 @@ exports.dailyBook = async (payload) => {
     });
     let lastPackageAmount = 0
     if (moneyCount) {
-      lastPackageAmount = moneyCount?.amount
+      // lastPackageAmount = moneyCount?.amount
+      lastPackageAmount = moneyCount?.reduce((total, item) => total + (Number(item?.amount) || 0), 0);
+
     }
 
     const bookIsCompletebyPackage = packageCount?.[0]?.is_complete
@@ -607,14 +629,14 @@ exports.dailyBook = async (payload) => {
     // payload.packageName_id = bookbyPackageCountExcludeCancel.length + 1
   }
 
-  console.log(packageCount[0]?.package_id, payload.package_id, packageCount.length, payload.packageName_id);
+  // console.log(packageCount[0]?.package_id, payload.package_id, packageCount.length, payload.packageName_id);
   // return
 
 
 
   const countPackage = await Package.findOne({
     where: {
-      id: packageCount[0]?.package_id || payload.package_id,
+      id: packageCount?.[0]?.package_id || payload.package_id,
       packageName: `Daily`,
       userId: payload.user_id,
     },
@@ -638,3 +660,9 @@ exports.dailyBook = async (payload) => {
   const bookslot = await slot_book.create(payload);
   return bookslot;
 }
+
+exports.checkbookingSlot = async (payload) => {
+  const checkBooked = await slot_book.findOne(payload);
+
+  return checkBooked;
+};

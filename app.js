@@ -25,6 +25,8 @@ app.use("/api/slot", slotentryRoute);
 app.use("/api/slot/book", slotBookRoute);
 app.use("/api/", slotMoneyRoute);
 app.use("/api/", slotReport);
+app.use(pageNotFound)
+app.use(errorHandler)
 
 
 

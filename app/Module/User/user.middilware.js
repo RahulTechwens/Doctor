@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { handleErrorMessage } = require("../../Utils/responseService");
 const { isExsistUser, packageFound, getBookSlots, getBookSlotMoney } = require("./user.service");
 
@@ -13,7 +14,14 @@ exports.completeValidateResult = async (req, res, next) => {
     // if (userData.type.includes('daily')) {
     console.log(getPackage, "getPackage");
     if (getPackage) {
-        const bookSlots = await getBookSlots({ id: id, package_id: getPackage?.id });
+        const bookSlots = await getBookSlots(
+            {
+                user_id: id, package_id: getPackage?.id, 
+                is_complete: {
+                    [Op.or]: [{ [Op.ne]: "cancelled" }, { [Op.eq]: null }]
+                }
+            }
+        );
         console.log(bookSlots, "bookSlots");
         let moneyCount;
 
@@ -35,7 +43,7 @@ exports.completeValidateResult = async (req, res, next) => {
                 }
                 console.log(lastPackageAmount, "lastPackageAmount");
                 if ((lastPackageAmount < 500 || (bookIsCompletebyPackage != 'complete' && bookIsCompletebyPackage != 'cancelled'))) {
-                    return handleErrorMessage(res, 400, " Make the previous payment first or complete");
+                    return handleErrorMessage(res, 400, "Please complete previous payment/booking before updating.");
                 } else {
                     console.log("else Daily");
                     // return
@@ -61,7 +69,7 @@ exports.completeValidateResult = async (req, res, next) => {
 
                 if ((totalAmountByPackage < 5000 && lastbookbyPackage.length <= 6) || (lastbookbyPackage.length <= 6 && bookIsCompletebyPackage.length < 6)) {
                     console.log("if");
-                    return handleErrorMessage(res, 400, " Make the previous payment first or complete");
+                    return handleErrorMessage(res, 400, "Please complete previous payment/booking before updating.");
                 } else {
                     console.log("1st else");
                     // return
