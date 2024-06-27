@@ -16,7 +16,7 @@ exports.bookSlot = async (req, res, next) => {
             return handleErrorMessage(res, 400, "Please select a slot.");
         }
 
-        // console.log(checkSlot, "checkSlot", checkSlotEntry, "checkSlotEntry");
+        console.log(checkSlot, "checkSlot",(checkSlot.length<6),"checkSlot.length<6");
         // return
         if (type == "entry") {
             delete payloadOfSlotBook.type
@@ -26,7 +26,7 @@ exports.bookSlot = async (req, res, next) => {
             }
 
 
-            if (!checkSlot) {
+            if (checkSlot.length<6) {
                 // console.log("if block");
                 const packageById = await getPackageById(package_id, user);
                 console.log(packageById, "packageById", packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase()));
@@ -48,7 +48,7 @@ exports.bookSlot = async (req, res, next) => {
                 }
                 return handleSuccessMessage(res, 200, "Please complete previous payment/booking before updating.", checkEntry)
             } else {
-                return handleErrorMessage(res, 400, "Slot is already booked.");
+                return handleErrorMessage(res, 400, "Slot limit is completed.");
             }
 
             // if (checkSlot.length <= checkSlotEntry?.length) {
@@ -91,7 +91,9 @@ exports.bookSlot = async (req, res, next) => {
             delete payloadOfSlotBook.type
             console.log(old_date, payloadOfSlotBook);
             // return
-            if (!checkSlot) {
+            if (checkSlot.length<6) {
+            // console.log("alart");
+
                 const packageById = await getPackageById(package_id, user);
                 if (!packageById || !packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase())) {
                     return handleErrorMessage(res, 400, "Opps you give the wrong package id.");
@@ -108,7 +110,7 @@ exports.bookSlot = async (req, res, next) => {
                 }
 
             } else {
-                return handleErrorMessage(res, 200, "Slots is allready full.");
+                return handleErrorMessage(res, 200, "Slot limit is completed.");
             }
         } else {
             return handleErrorMessage(res, 400, "Giving wrong type");

@@ -153,7 +153,7 @@ exports.checkbookingStatus = async (date, user) => {
 };
 
 exports.checkSlotEmpty = async (date, slot) => {
-  const checklotEmpty = await slot_book.findOne({
+  const checklotEmpty = await slot_book.findAll({
     where: {
       date: date,
       store_id: slot,
@@ -211,6 +211,8 @@ exports.reschedule = async (payload, old_date) => {
       const rescheduleSlot = await slot_book.update(payload, {
         where: {
           date: old_date,
+          user_id:payload?.user_id,
+          package_id:payload?.package_id,
           [Op.and]: [
             { is_complete: { [Op.ne]: "cancelled" } },
             { is_complete: { [Op.ne]: "complete" } },
@@ -319,8 +321,8 @@ exports.entry = async (date_string, user_id, mode) => {
 
 
     // newly added code
-    console.log(countBook.length, "ll");
-    if (countBook.length > 0) {
+    console.log(allSlotEntry[0]["limit"] - countBook?.length,"zzzzzzzz");
+    if (allSlotEntry[0]["limit"] - countBook?.length == 0) {
       element['slot_avaliability'] = 1
     } else {
       element['slot_avaliability'] = 0
@@ -374,7 +376,7 @@ exports.edit = async (date_string, user_id, mode) => {
     });
 
     console.log(countBook.length, "ll");
-    if (countBook.length > 0) {
+    if (allSlotEntry[0]["limit"] - countBook?.length == 0) {
       element['slot_avaliability'] = 1
     } else {
       element['slot_avaliability'] = 0
