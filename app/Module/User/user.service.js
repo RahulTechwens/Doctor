@@ -53,7 +53,11 @@ exports.isExsistEmail = async (email) => {
   try {
     const checkEmail = await User.findOne({
       where: {
-        email: email,
+        email:
+        {
+          [Op.and]: [{ [Op.eq]: email }, { [Op.ne]: "" }]
+        }
+        // email,
       },
     });
 

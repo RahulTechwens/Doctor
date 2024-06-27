@@ -14,9 +14,14 @@ exports.createUser = async (req, res, next) => {
             address,
             full_name
         }
-        const chkEmail = await isExsistEmail(email)
-        if (chkEmail) {
-            return handleErrorMessage(res, 400, "Email already exists")
+        if (!phone) {
+            return handleErrorMessage(res, 400, "Phone number is required")
+        }
+        if (email) {
+            const chkEmail = await isExsistEmail(email)
+            if (chkEmail) {
+                return handleErrorMessage(res, 400, "Email already exists")
+            }
         }
         const chkPhone = await isExsistPhone(phone)
         if (chkPhone) {
