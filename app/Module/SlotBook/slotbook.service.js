@@ -321,7 +321,6 @@ exports.entry = async (date_string, user_id, mode) => {
 
 
     // newly added code
-    console.log(allSlotEntry[0]["limit"] - countBook?.length,"zzzzzzzz");
     if (allSlotEntry[0]["limit"] - countBook?.length == 0) {
       element['slot_avaliability'] = 1
     } else {
