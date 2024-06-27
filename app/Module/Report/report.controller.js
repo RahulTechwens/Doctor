@@ -49,7 +49,7 @@ exports.patient = async (req, res, next) => {
     const offset = req?.query?.offset;
     const limit = req?.query?.limit;
     let extractArr = []
-    const reportPatientBookng = await patientBookngReport(from_date_str, to_date_str, filter, offset, limit,userId);
+    const reportPatientBookng = await patientBookngReport(from_date_str, to_date_str, filter, offset, limit, userId);
 
 
     for (let index = 0; index < reportPatientBookng.length; index++) {
@@ -62,7 +62,8 @@ exports.patient = async (req, res, next) => {
           time: reportPatientelement?.slot_entry?.start_time,
           full_name: reportPatientelement?.User?.UserProfiles?.full_name,
           phone: reportPatientelement?.User?.phone,
-          status: reportPatientelement?.is_complete
+          status: reportPatientelement?.is_complete,
+          type: reportPatientelement?.Package?.packageName,
         }
       )
     }

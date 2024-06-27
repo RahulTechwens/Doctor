@@ -59,15 +59,17 @@ exports.addSlotMoney = async (req, res, next) => {
         }
         // return
         const moneyAdd = await addMoney(payload)
-        if (moneyAdd.stats) {
+        if (moneyAdd.status) {
             return handleSuccessMessage(res, 200, "Money Added Successfully")
         } else {
-            return res.status(200).json({
-                'status': 200,
-                'success': true,
-                'message': 'Paid amount cannot be greater than Total amount',
-                'dueblance': moneyAdd?.dueBlance
-            })
+            return handleErrorMessage(res, 400, "Paid Amount exceeds the package limit of 5000",{'dueblance': moneyAdd?.dueBlance});
+
+            // return res.status(200).json({
+            //     'status': 200,
+            //     'success': true,
+            //     'message': 'Paid amount cannot be greater than Total amount',
+            //     'dueblance': moneyAdd?.dueBlance
+            // })
         }
     } catch (error) {
         next(error)

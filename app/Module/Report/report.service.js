@@ -65,6 +65,9 @@ exports.transactionReport = async (
         ],
       },
     ],
+    order: [
+      ['createdAt', 'DESC']
+    ],
     offset: getOffset,
     limit: getLimit,
     raw: true,
@@ -114,31 +117,37 @@ exports.patientBookngReport = async (
       user_id: userId,
     };
   }
-      const patient_bookng_report= await slot_book.findAll({
-        where: whereCondition,
+  const patient_bookng_report = await slot_book.findAll({
+    where: whereCondition,
+    include: [
+      {
+        model: Package,
+      },
+      {
+        model: slot_entries,
+      },
+      {
+        model: User,
         include: [
           {
-            model: slot_entries,
-          },
-          {
-            model: User,
-            include: [
-              {
-                model: UserProfile,
-              },
-            ],
+            model: UserProfile,
           },
         ],
-        offset: getOffset || 0,
-        limit: getLimit || 10,
-        raw: true,
-        nest: true,
-      });
-     
- console.log(patient_bookng_report,"patient_bookng_report");
+      },
+    ],
+    order: [
+      ['createdAt', 'DESC']
+    ],
+    offset: getOffset || 0,
+    limit: getLimit || 10,
+    raw: true,
+    nest: true,
+  });
 
-    return patient_bookng_report;
-  
+  console.log(patient_bookng_report, "patient_bookng_report");
+
+  return patient_bookng_report;
+
 };
 
 
@@ -179,9 +188,9 @@ exports.userInfoBySlotBooked = async (
   if (filter == "all") {
     whereConds = {};
   }
-  let userinfo 
-  if (type=="Booking") {
-    userinfo= await User.findAll({
+  let userinfo
+  if (type == "Booking") {
+    userinfo = await User.findAll({
       where: whereCondition,
       include: [
         {
@@ -192,14 +201,18 @@ exports.userInfoBySlotBooked = async (
           required: true
         }
       ],
-      attributes: ["id", "user_name", "phone", "email"],
+      order: [
+        ['createdAt', 'DESC'],
+        // [slot_book,'createdAt', 'DESC']
+      ],
+      attributes: ["id", "user_name", "phone", "email", "type", "createdAt"],
       offset: getOffset || 0,
       limit: getLimit || 10,
       // raw: true,
       // nest: true,
     })
-  }else{
-    userinfo= await User.findAll({
+  } else {
+    userinfo = await User.findAll({
       where: whereCondition,
       include: [
         {
@@ -210,13 +223,18 @@ exports.userInfoBySlotBooked = async (
           required: true
         }
       ],
-      attributes: ["id", "user_name", "phone", "email"],
+      order: [
+        ['createdAt', 'DESC'],
+        // [slot_book,'createdAt', 'DESC']
+      ],
+      attributes: ["id", "user_name", "phone", "email", "type", "createdAt"],
+
       offset: getOffset || 0,
       limit: getLimit || 10,
       // raw: true,
       // nest: true,
     })
   }
-  
+
   return userinfo;
 }

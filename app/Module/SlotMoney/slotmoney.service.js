@@ -28,10 +28,10 @@ exports.addMoney = async (paylaod) => {
   }
   let summation = Number(summationOfMoney) + Number(paylaod?.amount);
   if (summation > newPayload?.total_amount) {
-    return { stats: false, summation: summation, dueBlance: (newPayload?.total_amount - summationOfMoney )};
+    return { status: false, summation: summation, dueBlance: (newPayload?.total_amount - summationOfMoney )};
   } else {
     const add = await slot_money.create({ ...paylaod, total_amount: paylaod?.type == 'Daily' ? '500' : "5000" });
-    return { stats: true, summation: summation };
+    return { status: true, summation: summation };
   }
 };
 
