@@ -412,7 +412,7 @@ exports.userWiseSlot = async (patientId) => {
     let countBook = await slot_book.findAll({
       where: {
         store_id: element?.id,
-        is_complete: { [Op.ne]: "cancelled" }
+        // is_complete: { [Op.ne]: "cancelled" }
         // date: date_string,
       },
     });
@@ -433,7 +433,7 @@ exports.userWiseSlot = async (patientId) => {
         where: {
           store_id: element?.id,
           // date: date_string,
-          is_complete: { [Op.ne]: "cancelled" },
+          // is_complete: { [Op.ne]: "cancelled" },
           user_id: patientId,
         },
         include: [
