@@ -16,7 +16,7 @@ exports.bookSlot = async (req, res, next) => {
             return handleErrorMessage(res, 400, "Please select a slot.");
         }
 
-        console.log(checkSlot, "checkSlot",(checkSlot.length<6),"checkSlot.length<6");
+        console.log(checkSlot, "checkSlot", (checkSlot.length < 6), "checkSlot.length<6");
         // return
         if (type == "entry") {
             delete payloadOfSlotBook.type
@@ -26,7 +26,7 @@ exports.bookSlot = async (req, res, next) => {
             }
 
 
-            if (checkSlot.length<6) {
+            if (checkSlot.length < 6) {
                 // console.log("if block");
                 const packageById = await getPackageById(package_id, user);
                 console.log(packageById, "packageById", packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase()));
@@ -91,8 +91,8 @@ exports.bookSlot = async (req, res, next) => {
             delete payloadOfSlotBook.type
             console.log(old_date, payloadOfSlotBook);
             // return
-            if (checkSlot.length<6) {
-            // console.log("alart");
+            if (checkSlot.length < 6) {
+                // console.log("alart");
 
                 const packageById = await getPackageById(package_id, user);
                 if (!packageById || !packageById?.packageName.toLowerCase().includes(packageById?.User?.type.toLowerCase())) {
@@ -161,6 +161,7 @@ exports.getBookSlot = async (req, res, next) => {
 exports.getUserWiseSlotBooked = async (req, res, next) => {
     try {
         let extractArr = [];
+        // let buttonDisable = 0;
         const patientId = req?.query?.patientId;
         const userWiseSlotBooking = await userWiseSlot(patientId);
 
@@ -177,10 +178,21 @@ exports.getUserWiseSlotBooked = async (req, res, next) => {
         //     )
         //   }
 
+        // if (userWiseSlotBooking?.length > 0) {
+        //     let slotbookCount = userWiseSlotBooking?.[0]?.patientWiseBookedData?.length
+
+        //     let slotbookComplete = userWiseSlotBooking?.[0]?.patientWiseBookedData?.[0]?.slotBook?.reduce((acc, curr) => curr?.is_complete == "complete" ? [...acc, curr] : acc, []).length
+
+        //     let packageName = userWiseSlotBooking?.[0]?.packageName
+        //     console.log(slotbookCount, "slotbookCount", slotbookComplete, "packageName", packageName);
+        //     if (slotbookCount == 6 && slotbookComplete < 6) {
+        //         buttonDisable = 1
+        //     }
+        // }
         return res.status(200).json({
             'status': 200,
             'success': true,
-            'data': userWiseSlotBooking
+            'data': [userWiseSlotBooking?.[0]]
         })
     } catch (error) {
         next(error)

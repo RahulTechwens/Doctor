@@ -1,5 +1,6 @@
+const { Op } = require("sequelize");
 const { handleSuccessMessage, handleErrorMessage } = require("../../Utils/responseService");
-const { register, isExsistEmail, listUsers, isExsistPhone, packageList, isExsistUser, updateUser } = require("./user.service");
+const { register, isExsistEmail, listUsers, isExsistPhone, packageList, isExsistUser, updateUser, amountData } = require("./user.service");
 
 exports.createUser = async (req, res, next) => {
     try {
@@ -24,6 +25,7 @@ exports.createUser = async (req, res, next) => {
             }
         }
         const chkPhone = await isExsistPhone(phone)
+        console.log(chkPhone, "ch");
         if (chkPhone) {
             return handleErrorMessage(res, 400, "Phone already exists")
         }
@@ -54,8 +56,16 @@ exports.listUser = async (req, res, next) => {
 
 exports.listPackage = async (req, res, next) => {
     try {
-        const userId = req?.params.userId
-        const list = await packageList(userId);
+        const userId = req?.params?.userId;
+
+        const chkUser = await isExsistUser(userId);
+        if (!chkUser) {
+            return handleErrorMessage(res, 404, "User not found")
+        }
+
+        // console.log(chkUser, "chkUser");
+        // return
+        const list = await packageList(userId, chkUser?.type);
         return handleSuccessMessage(res, 200, list)
     } catch (error) {
         next(error)
@@ -64,17 +74,18 @@ exports.listPackage = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
     try {
-        const { id, type, address, full_name } = req.body;
+        const { id, type, email, address, full_name } = req.body;
         const userPayload = {
             user_name: full_name,
+            email,
             type
         }
         const userProfilePayload = {
             address,
             full_name
         }
-        const chkEmail = await isExsistUser(id)
-        if (!chkEmail) {
+        const chkUser = await isExsistUser(id)
+        if (!chkUser) {
             return handleErrorMessage(res, 404, "User not found")
         }
 
@@ -89,3 +100,31 @@ exports.updateUser = async (req, res, next) => {
 }
 // http://13.232.87.199/
 
+
+
+exports.userAmount = async (req, res, next) => {
+    try {
+        const userId = req?.params?.userId;
+
+        const chkUser = await isExsistUser(userId);
+        if (!chkUser) {
+            return handleErrorMessage(res, 404, "User not found")
+        }
+
+        // console.log(chkUser, "chkUser");
+        // return
+        const dueAmount = await amountData(
+            {
+                userId: userId,
+                // [Op.and]: fn('LOWER', col('packageName')), payload.type.toLowerCase()
+                packageName: {
+                    [Op.like]: `%${chkUser?.type}%`
+                }
+            }
+        );
+        return handleSuccessMessage(res, 200, "Due amount get successfully", dueAmount)
+
+    } catch (error) {
+        return next(error);
+    }
+}

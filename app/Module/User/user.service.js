@@ -1,5 +1,6 @@
 const { User, UserProfile, Package, slot_money, slot_book } = require("../../../models/");
 const { Op, where } = require("sequelize");
+const envConfig = require("../../Utils/envConfig");
 
 exports.register = async (payload, userProfilePayload) => {
   try {
@@ -54,10 +55,11 @@ exports.isExsistEmail = async (email) => {
     const checkEmail = await User.findOne({
       where: {
         email:
-        {
-          [Op.and]: [{ [Op.eq]: email }, { [Op.ne]: "" }]
-        }
-        // email,
+          email,
+        // {
+        //   [Op.and]: [{ [Op.eq]: email }, { [Op.ne]: null }]
+        // }der43
+
       },
     });
 
@@ -125,16 +127,19 @@ exports.listUsers = async (search) => {
   }
 };
 
-exports.packageList = async (userId) => {
+exports.packageList = async (userId, type) => {
   try {
     const list = Package.findAll({
       where: {
-        userId: userId
+        userId: userId,
+        // packageName: {
+        //   [Op.like]: `%${type}%`
+        // }
       },
       include: [
         {
           model: slot_book,
-          attributes: ["id"],
+          attributes: ["id", "is_complete"],
           // required: true
         }
       ],
@@ -262,4 +267,46 @@ exports.getBookSlotMoney = async (payload) => {
   });
   // console.log(payload, 'payload', getPackage, "getPackage");
   return getBookSlot
+}
+
+
+exports.amountData = async (payload) => {
+  const amount = await Package.findOne({
+    where: payload,
+    include: [
+      {
+        model: slot_book,
+        where: {
+          is_complete: { [Op.ne]: "cancelled" },
+        },
+        attributes: ["id", "is_complete"],
+        // required: true
+      },
+      {
+        model: slot_money,
+        // attributes: ["id", "is_complete"],
+        // required: true
+      }
+    ],
+    order: [
+      ['createdAt', 'DESC']
+    ],
+  });
+  let amountDue;
+  let amountTotal;
+  if (amount?.slot_moneys.length > 0) {
+    const amountData = amount?.slot_moneys?.reduce((acc, cur) => acc += Number(cur?.amount), 0);
+    const amountTotal = Number(amount?.slot_moneys?.[0]?.total_amount);
+    amountDue = amountTotal - amountData
+  } else {
+    amountDue = amount?.packageName?.includes('daily') ? Number(envConfig.DAILY_AMOUNT) : Number(envConfig.PACKAGE_AMOUNT)
+  }
+  console.log(amountDue, "amountDue");
+  let returnData = {
+    dueAmount: amountDue
+  };
+
+
+  // console.log(payload, 'payload', amount, "amount");
+  return returnData
 }

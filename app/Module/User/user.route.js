@@ -9,5 +9,6 @@ router.post("/", validateResult, userController.createUser);
 router.post("/update", validateResult, completeValidateResult, userController.updateUser);
 router.get("/", validateResult, userController.listUser);
 router.get("/package/:userId", userController.listPackage);
+router.get("/amount/:userId", userController.userAmount);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const { where } = require("sequelize");
+const { where, Op } = require("sequelize");
 const { slot_money, Package, User, Sequelize } = require("../../../models/");
 const { use } = require("./slotmoney.route");
 const { addDueMoney } = require("./soltmoney.helper");
@@ -28,17 +28,20 @@ exports.addMoney = async (paylaod) => {
   }
   let summation = Number(summationOfMoney) + Number(paylaod?.amount);
   if (summation > newPayload?.total_amount) {
-    return { status: false, summation: summation, dueBlance: (newPayload?.total_amount - summationOfMoney )};
+    return { status: false, summation: summation, dueBlance: (newPayload?.total_amount - summationOfMoney) };
   } else {
     const add = await slot_money.create({ ...paylaod, total_amount: paylaod?.type == 'Daily' ? '500' : "5000" });
     return { status: true, summation: summation };
   }
 };
 
-exports.getMoney = async (user_id) => {
+exports.getMoney = async (user_id, type) => {
   const money = await Package.findAll({
     where: {
       userId: user_id,
+      packageName: {
+        [Op.like]: `%${type}%`
+      }
     },
 
     include: [
@@ -104,11 +107,11 @@ exports.getMoney = async (user_id) => {
     ],
     order: [
       ['createdAt', 'DESC'],
-      [slot_money,'createdAt', 'DESC'],
+      [slot_money, 'createdAt', 'DESC'],
     ],
     nest: true,
   });
- 
+
   // return money
   const jsonModify = addDueMoney(money);
   return jsonModify;
