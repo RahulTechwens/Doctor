@@ -3,7 +3,7 @@ const { Op } = require("sequelize")
 const { handleSuccessMessage, handleErrorMessage } = require("../../Utils/responseService")
 const { checkbookingSlot } = require("../SlotBook/slotbook.service")
 const { addMoney, getMoney, getPackage, getUser } = require("./slotmoney.service")
-const { isExsistUser, packageList } = require("../User/user.service");
+const { isExsistUser, packageList, packageFound } = require("../User/user.service");
 const envConfig = require("../../Utils/envConfig");
 
 exports.addSlotMoney = async (req, res, next) => {
@@ -88,16 +88,23 @@ exports.getSlotMoney = async (req, res, next) => {
         }
         // console.log(envConfig);
         // return
+        const currentPackage = await packageFound({ id: user_id, type: chkUser?.type })
         const getMoneyUserId = await getMoney(user_id, chkUser?.type);
-        // console.log(getMoneyUserId, "getMoneyUserId", getMoneyUserId.length, "getMoneyUserId?.length < 0", getMoneyUserId?.length < 0);
+        console.log(currentPackage, "currentPackage",getMoneyUserId);
 
         if (getMoneyUserId?.length > 0) {
             return res.status(200).json({
                 'status': 200,
                 'success': true,
-                'data': [getMoneyUserId?.[0]]
+                'data': currentPackage?.packageName==getMoneyUserId?.[0]?.packageName?[getMoneyUserId?.[0]]:[]
             })
-        } 
+        }else{
+            return res.status(200).json({
+                'status': 200,
+                'success': true,
+                'data': []
+            })
+        }
         // else {
         //     // const bookingList = await packageList(user_id, chkUser?.type);
         //     // console.log(bookingList?.[0]?.slot_books?.length > 0, bookingList?.[0]?.slot_books?.[0]?.is_complete != "cancelled", (bookingList?.[0]?.slot_books?.length > 0 && bookingList?.[0]?.slot_books?.is_complete != "cancelled"));
