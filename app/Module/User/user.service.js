@@ -279,7 +279,7 @@ exports.amountData = async (payload) => {
         where: {
           is_complete: { [Op.ne]: "cancelled" },
         },
-        attributes: ["id", "is_complete"],
+        // attributes: ["id", "is_complete"],
         // required: true
       },
       {
@@ -289,21 +289,41 @@ exports.amountData = async (payload) => {
       }
     ],
     order: [
-      ['createdAt', 'DESC']
+      ['createdAt', 'DESC'],
+      [slot_book, 'createdAt', 'DESC'],
+      [slot_money, 'createdAt', 'DESC']
     ],
   });
   let amountDue;
   let amountTotal;
   if (amount?.slot_moneys.length > 0) {
-    const amountData = amount?.slot_moneys?.reduce((acc, cur) => acc += Number(cur?.amount), 0);
+    let amountData = amount?.slot_moneys?.reduce((acc, cur) => acc += Number(cur?.amount), 0);
     const amountTotal = Number(amount?.slot_moneys?.[0]?.total_amount);
     amountDue = amountTotal - amountData
+    // console.log(amountData, "amountData", amountDue);
+
+    if (amount?.packageName?.toLowerCase()?.includes('daily') && amount?.slot_moneys?.[0]?.date == amount?.slot_books?.[0]?.date) {
+      amountData = amount?.slot_moneys?.reduce((acc, cur) => {
+        if (cur?.date == amount?.slot_books?.[0]?.date){
+
+          acc += Number(cur?.amount)
+        }
+        return acc
+      }, 0);
+      amountDue = amountTotal - amountData
+    console.log(amountData, "amountData", amountDue);
+
+
+    } else if(amount?.packageName?.toLowerCase()?.includes('daily') && amount?.slot_moneys?.[0]?.date != amount?.slot_books?.[0]?.date){
+      amountDue = Number(amount?.slot_moneys?.[0]?.total_amount)
+    }
   } else {
-    amountDue = amount?.packageName?.includes('daily') ? Number(envConfig.DAILY_AMOUNT) : Number(envConfig.PACKAGE_AMOUNT)
+    amountDue = amount?.packageName?.toLowerCase()?.includes('daily') ? Number(envConfig.DAILY_AMOUNT) : Number(envConfig.PACKAGE_AMOUNT)
   }
-  console.log(amountDue, "amountDue");
+  // console.log(amountDue, "amountDue",amount?.packageName?.toLowerCase()?.includes('daily'));
   let returnData = {
-    dueAmount: amountDue
+    dueAmount: amountDue,
+    amount
   };
 
 
