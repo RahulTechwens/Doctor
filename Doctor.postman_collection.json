@@ -1,0 +1,982 @@
+{
+	"info": {
+		"_postman_id": "d374e62e-b2dc-4a92-860d-94752fce1a11",
+		"name": "Doctor",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25839845"
+	},
+	"item": [
+		{
+			"name": "User Registration",
+			"item": [
+				{
+					"name": "Registration",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"\",\n    \"phone\": \"9933541322\",\n    \"type\": \"package\",\n    \"address\": \"123 Main St, City, Country\",\n    \"full_name\": \"demo10\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}user",
+							"host": [
+								"{{localhost}}user"
+							],
+							"query": [
+								{
+									"key": "localhost",
+									"value": "localhost:5001",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 3,\n    \"email\": \"test1.1@example.com\",\n    \"phone\": \"9933541370\",\n    \"type\": \"package\",\n    \"address\": \"123 Main St, City, Country\",\n    \"full_name\": \"test1.1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}user/updated",
+							"host": [
+								"{{localhost}}user"
+							],
+							"path": [
+								"updated"
+							],
+							"query": [
+								{
+									"key": "localhost",
+									"value": "localhost:5001",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search with Phone Number and Name",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}user?search=n",
+							"host": [
+								"{{host}}user"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "n"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "packageListByuserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}user/package/5",
+							"host": [
+								"{{localhost}}user"
+							],
+							"path": [
+								"package",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DueAmountByuserId",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}user/amount/5",
+							"host": [
+								"{{localhost}}user"
+							],
+							"path": [
+								"amount",
+								"5"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Slot Book",
+			"item": [
+				{
+					"name": "Slot Booking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"store\": 3,\n    \"date\": \"2024-06-28\",\n    \"old_date\":\"2024-06-28\",\n    \"time\": \"11:00:00\",\n    \"user\": 7,\n    \"package_id\": 7,\n    \"type\": \"reschedule\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}slot/book",
+							"host": [
+								"{{localhost}}slot"
+							],
+							"path": [
+								"book"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all stlot",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}slot/book?user_id=5&date=2024-08-21&mode=edit",
+							"host": [
+								"{{localhost}}slot"
+							],
+							"path": [
+								"book"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "5"
+								},
+								{
+									"key": "date",
+									"value": "2024-08-21"
+								},
+								{
+									"key": "mode",
+									"value": "edit"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "get all slots",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://engaged-expert-stinkbug.ngrok-free.app/api/slots",
+									"protocol": "https",
+									"host": [
+										"engaged-expert-stinkbug",
+										"ngrok-free",
+										"app"
+									],
+									"path": [
+										"api",
+										"slots"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "150"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 03 Apr 2024 10:36:17 GMT"
+								},
+								{
+									"key": "Ngrok-Trace-Id",
+									"value": "17d62aab254121aeec62808b3a564c72"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"date\": \"2024-04-30\",\n            \"time\": \"14:30:00\",\n            \"description\": \"Meeting with doctor\",\n            \"is_complete\": false,\n            \"user\": 1\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "user wise booking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}slot/book/details/?patientId=6",
+							"host": [
+								"{{localhost}}slot"
+							],
+							"path": [
+								"book",
+								"details",
+								""
+							],
+							"query": [
+								{
+									"key": "patientId",
+									"value": "6"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Taka",
+			"item": [
+				{
+					"name": "Add Money",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2024-06-27\",\n    \"time\": \"12:00:00\",\n    \"amount\": \"500\",\n    \"package_id\":4,\n    \"user\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}add/money",
+							"host": [
+								"{{localhost}}add"
+							],
+							"path": [
+								"money"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Add Money",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2024-04-17\",\n    \"time\": \"12:00:00\",\n    \"amount\": \"1000\",\n    \"user\": 1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{livehost}}add/money",
+									"host": [
+										"{{livehost}}add"
+									],
+									"path": [
+										"money"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "POST, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "64"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 17 Apr 2024 09:07:35 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"message\": \"Money Added Successful\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Money by user ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://9e0d-45-64-221-249.ngrok-free.app/api/money?user_id=1",
+							"protocol": "https",
+							"host": [
+								"9e0d-45-64-221-249",
+								"ngrok-free",
+								"app"
+							],
+							"path": [
+								"api",
+								"money"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get Money by user ID",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{livehost}}money?user_id=1",
+									"host": [
+										"{{livehost}}money"
+									],
+									"query": [
+										{
+											"key": "user_id",
+											"value": "1"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "167"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 17 Apr 2024 09:24:05 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"message\": \"Money Added Successful\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"user\": 1\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Report",
+			"item": [
+				{
+					"name": "Transaction Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}transaction/report?filter=all&from_date=2024-03-01&to_date=2024-05-30&offset=1&limit=10&userId=1",
+							"host": [
+								"{{localhost}}transaction"
+							],
+							"path": [
+								"report"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "all"
+								},
+								{
+									"key": "from_date",
+									"value": "2024-03-01"
+								},
+								{
+									"key": "to_date",
+									"value": "2024-05-30"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "userId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Custom Transaction",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{livehost}}transaction/report?filter=custom&from_date=2024-04-01&to_date=2024-04-30",
+									"host": [
+										"{{livehost}}transaction"
+									],
+									"path": [
+										"report"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "custom"
+										},
+										{
+											"key": "from_date",
+											"value": "2024-04-01"
+										},
+										{
+											"key": "to_date",
+											"value": "2024-04-30"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2038"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 23 Apr 2024 10:11:57 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"data\": [\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:27:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:02:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"500\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:06:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"20\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:13:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"30\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:14:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"100\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:22:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"50\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:24:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"5\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:28:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"95\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        }\n    ]\n}"
+						},
+						{
+							"name": "Today's Transaction",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{livehost}}transaction/report?filter=today",
+									"host": [
+										"{{livehost}}transaction"
+									],
+									"path": [
+										"report"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "today"
+										},
+										{
+											"key": "from_date",
+											"value": "2024-04-01",
+											"disabled": true
+										},
+										{
+											"key": "to_date",
+											"value": "2024-04-30",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "39"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 23 Apr 2024 10:12:35 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"data\": []\n}"
+						},
+						{
+							"name": "All Transaction",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{livehost}}transaction/report?filter=all",
+									"host": [
+										"{{livehost}}transaction"
+									],
+									"path": [
+										"report"
+									],
+									"query": [
+										{
+											"key": "filter",
+											"value": "all"
+										},
+										{
+											"key": "from_date",
+											"value": "2024-04-01",
+											"disabled": true
+										},
+										{
+											"key": "to_date",
+											"value": "2024-04-30",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2038"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 23 Apr 2024 10:13:08 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"data\": [\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:27:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:02:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"500\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:06:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"20\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:13:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"30\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:14:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"100\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:22:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"50\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:24:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"5\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"18:28:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"95\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        },\n        {\n            \"user\": 1,\n            \"date\": \"2024-04-17\",\n            \"time\": \"12:00:00\",\n            \"total_amount\": \"5000\",\n            \"amount\": \"1000\",\n            \"profile\": {\n                \"id\": 1,\n                \"address\": \"123 Main St, City, Country\",\n                \"full_name\": \"Rahul Sabui\",\n                \"user_id\": 1\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Patient Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}patient/report?filter=all&offset=1&limit=10",
+							"host": [
+								"{{localhost}}patient"
+							],
+							"path": [
+								"report"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "all"
+								},
+								{
+									"key": "from_date",
+									"value": "2024-04-01",
+									"disabled": true
+								},
+								{
+									"key": "to_date",
+									"value": "2024-05-10",
+									"disabled": true
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "userId",
+									"value": "3",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userinfoBySlotBooked",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}patientInfo/report?filter=custom&from_date=2024-03-01&to_date=2024-08-17&offset=1&limit=10&type=Booking",
+							"host": [
+								"{{localhost}}patientInfo"
+							],
+							"path": [
+								"report"
+							],
+							"query": [
+								{
+									"key": "filter",
+									"value": "custom"
+								},
+								{
+									"key": "from_date",
+									"value": "2024-03-01"
+								},
+								{
+									"key": "to_date",
+									"value": "2024-08-17"
+								},
+								{
+									"key": "offset",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "userId",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "type",
+									"value": "Booking"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Slot Entry",
+			"item": [
+				{
+					"name": "Entry Of Slot",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\":\"Slot 2\",\n    \"limit\":6,\n    \"seat_available\":6,\n    \"date\": \"2024-04-10T00:00:00Z\",\n    \"start_time\": \"10:00:00\",\n    \"end_time\": \"11:00:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}slot/entry",
+							"host": [
+								"{{localhost}}slot"
+							],
+							"path": [
+								"entry"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Slot Entry LIst",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}slot/entry",
+							"host": [
+								"{{localhost}}slot"
+							],
+							"path": [
+								"entry"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Slot Entry LIst",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{livehost}}get/slot/entry",
+									"host": [
+										"{{livehost}}get"
+									],
+									"path": [
+										"slot",
+										"entry"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Allow",
+									"value": "GET, POST, HEAD, OPTIONS"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1078"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Date",
+									"value": "Wed, 10 Apr 2024 11:16:52 GMT"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.8.10"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept, Cookie"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"success\": true,\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Slot 1\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"11:00:00\",\n            \"end_time\": \"12:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Slot 2\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"12:00:00\",\n            \"end_time\": \"13:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Slot 3\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"13:00:00\",\n            \"end_time\": \"14:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 4,\n            \"name\": \"Slot 4\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"14:00:00\",\n            \"end_time\": \"15:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 5,\n            \"name\": \"Slot 5\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"15:00:00\",\n            \"end_time\": \"16:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 6,\n            \"name\": \"Slot 6\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"16:00:00\",\n            \"end_time\": \"17:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 7,\n            \"name\": \"Slot 7\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"17:00:00\",\n            \"end_time\": \"18:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        },\n        {\n            \"id\": 8,\n            \"name\": \"Slot 8\",\n            \"date\": \"2024-04-10T00:00:00Z\",\n            \"start_time\": \"18:00:00\",\n            \"end_time\": \"19:00:00\",\n            \"limit\": 6,\n            \"seat_available\": 6\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		}
+	]
+}
