@@ -73,9 +73,9 @@ exports.bookSlot = async (req, res, next) => {
             const formattedDate = currentDate.toLocaleDateString('en-CA');
             // console.log(formattedDate, "date", date, "formattedDate != date", formattedDate != date);
 
-            // if (formattedDate != date) {
-            //     return handleErrorMessage(res, 400, "Slot status can be Completed on scheduled date")
-            // }
+            if (formattedDate != date) {
+                return handleErrorMessage(res, 400, "Slot status can be Completed on scheduled date")
+            }
 
             // return
             const presentData = await present(user, date, store);
